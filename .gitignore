@@ -7,3 +7,6 @@ logs
 
 # Dist Folder
 lib/
+
+# .env file
+.env

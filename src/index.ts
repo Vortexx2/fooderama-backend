@@ -1,5 +1,7 @@
-import app from './app';
+import { app, config } from './app';
 
-const server = app.listen('3000', () => {
+const port: number = config.has('port') ? config.get('port') : 3000;
+
+const server = app.listen(config.get('port'), () => {
   console.log('Listening on port 3000');
 });
