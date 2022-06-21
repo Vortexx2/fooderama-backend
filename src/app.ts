@@ -7,8 +7,9 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import express from 'express';
-
 import sequelize from 'sequelize';
+
+import logger from "./logger";
 // imports above
 
 require('dotenv').config();
