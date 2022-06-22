@@ -6,10 +6,12 @@ import config from 'config';
 import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import sequelize from 'sequelize';
 
-import logger from "./logger";
+import logger from './logger';
+import router from './routes';
+import { logReqInfo, logCompleteInfo } from './middleware/logger';
 // imports above
 
 require('dotenv').config();
@@ -23,5 +25,13 @@ app.use(
     contentSecurityPolicy: false,
   })
 );
+
+// app.use(logCompleteInfo);
+app.use(logReqInfo);
+app.get('/', (req: Request, res: Response, next: NextFunction) => {
+  res.send('Hello World');
+});
+
+app.use('/api/', router);
 
 export { app, config };
