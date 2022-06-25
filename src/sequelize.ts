@@ -41,9 +41,9 @@ async function syncDB(
       force,
       alter,
     });
-    logger.info('DB has been synced');
+    logger.debug('DB has been synced');
   } catch (err) {
-    logger.info(err);
+    logger.error(err);
   }
 }
 
@@ -54,7 +54,7 @@ const sequelize = new Sequelize(dbName, username, password, {
   dialect: 'postgres',
   host,
   port,
-  logging: (msg: string) => logger.debug(msg),
+  logging: false,
   define: {
     timestamps: true,
     freezeTableName: false,
