@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import restRouter from './restaurants';
+import restRouter from './restaurants.route';
 
 const router = Router();
 

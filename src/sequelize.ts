@@ -1,6 +1,8 @@
 import { Sequelize } from 'sequelize';
 import config from 'config';
+
 import logger from './logger';
+import initRestaurant from './models/restaurants/restaurants.model';
 
 interface DatabaseConfig {
   host: string;
@@ -10,34 +12,56 @@ interface DatabaseConfig {
   password: string;
 }
 
-const dbConfig: DatabaseConfig = config.get('dbConfig');
-const { host, port, dbName, username, password } = dbConfig;
-
-class SequelizeInstance {
-  sequelize: Sequelize;
-
-  constructor() {
-    this.sequelize = new Sequelize(dbName, username, password, {
-      dialect: 'postgres',
-      host,
-      port,
-      logging: (msg: string) => logger.debug(msg),
-      define: {
-        freezeTableName: true,
-      },
-    });
-
-    this.checkConnection();
-  }
-
-  private async checkConnection(): Promise<void> {
-    try {
-      await this.sequelize.authenticate();
-      logger.info('Connected to DB');
-    } catch (error) {
-      logger.error('Unable to connect to DB', error);
-    }
+/**
+ * Check if sequelize instance is connected to the specified database.
+ * @param seq the sequelize instance
+ */
+async function checkDBConnection(seq: Sequelize): Promise<void> {
+  try {
+    await seq.authenticate();
+    logger.info('Connected to DB');
+  } catch (error) {
+    logger.error('Could not connect to DB');
   }
 }
 
-export { SequelizeInstance };
+/**
+ * Syncs all models that exist on the given `seq` instance.
+ * @param seq sequelize instance
+ * @param force sets seq.sync.force to given. Deletes and creates new tables on each restart.
+ * @param alter sets seq.sync.alter to given. Deletes and creates new tables only if schema has changed.
+ */
+async function syncDB(
+  seq: Sequelize,
+  force: boolean = false,
+  alter: boolean = false
+): Promise<void> {
+  try {
+    await seq.sync({
+      force,
+      alter,
+    });
+    logger.info('DB has been synced');
+  } catch (err) {
+    logger.info(err);
+  }
+}
+
+const dbConfig: DatabaseConfig = config.get('dbConfig');
+const { host, port, dbName, username, password } = dbConfig;
+
+const sequelize = new Sequelize(dbName, username, password, {
+  dialect: 'postgres',
+  host,
+  port,
+  logging: (msg: string) => logger.debug(msg),
+  define: {
+    timestamps: true,
+    freezeTableName: false,
+  },
+});
+
+// give sequelize instance control of all models
+const Restaurant = initRestaurant(sequelize);
+
+export { sequelize, checkDBConnection, syncDB };

@@ -1,3 +1,6 @@
+// All default config settings are defined below
+// They can be imported anywhere through config.get('attr')
+
 module.exports = {
   host: 'localhost',
   port: 3000,
