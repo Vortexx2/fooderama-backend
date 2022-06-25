@@ -9,7 +9,7 @@ function logReqInfo(req: Request, res: Response, next: NextFunction) {
 function logCompleteInfo(req: Request, res: Response, next: NextFunction) {
   res.on('finish', () => {
     logger.info(
-      `${req.method} ${req.path} : Response Status Code ${res.statusCode}`
+      `${req.method} ${req.originalUrl} : Response Status Code ${res.statusCode}`
     );
   });
 

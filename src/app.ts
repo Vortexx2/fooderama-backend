@@ -7,11 +7,12 @@ import compression from 'compression';
 import helmet from 'helmet';
 import cors from 'cors';
 import express, { Request, Response, NextFunction } from 'express';
-import sequelize from 'sequelize';
+// import sequelize from 'sequelize';
 
 import logger from './logger';
 import router from './routes';
 import { logReqInfo, logCompleteInfo } from './middleware/logger';
+import { SequelizeInstance } from './sequelize';
 // imports above
 
 require('dotenv').config();
@@ -26,8 +27,9 @@ app.use(
   })
 );
 
-// app.use(logCompleteInfo);
-app.use(logReqInfo);
+const seqInstance = new SequelizeInstance();
+
+app.use(logCompleteInfo);
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World');
 });
