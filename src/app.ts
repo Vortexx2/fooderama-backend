@@ -11,7 +11,7 @@ import express, { Request, Response, NextFunction } from 'express';
 
 import logger from './logger';
 import router from './routes';
-import { logReqInfo, logCompleteInfo } from './middleware/logger';
+import { logReqInfo, logCompleteInfo, logError } from './middleware/logger';
 import { sequelize, checkDBConnection, syncDB } from './sequelize';
 // imports above
 
@@ -33,6 +33,11 @@ checkDBConnection(sequelize);
 syncDB(sequelize, false, true);
 
 app.use(logCompleteInfo);
+
+// TODO: Add good error handlers
+app.use(logError);
+
+
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World');
 });

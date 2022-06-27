@@ -36,7 +36,7 @@ export default function (sequelize: Sequelize) {
       },
       description: {
         type: DataTypes.STRING(MAX_DESC_LEN),
-        allowNull: false,
+        allowNull: true,
 
         validate: {
           len: [MIN_DESC_LEN, MAX_DESC_LEN],
@@ -49,7 +49,7 @@ export default function (sequelize: Sequelize) {
         defaultValue: true,
       },
       rating: {
-        type: DataTypes.FLOAT.UNSIGNED,
+        type: DataTypes.FLOAT,
         allowNull: true,
         validate: {
           min: MIN_RATING,

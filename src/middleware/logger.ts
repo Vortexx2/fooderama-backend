@@ -1,5 +1,5 @@
 import logger from '../logger';
-import { Request, Response, NextFunction } from 'express';
+import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 
 function logReqInfo(req: Request, res: Response, next: NextFunction) {
   logger.info(`${req.method} ${req.path}`);
@@ -16,4 +16,9 @@ function logCompleteInfo(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-export { logReqInfo, logCompleteInfo };
+const logError: ErrorRequestHandler = (err, req, res, next) => {
+  logger.error(err.message);
+  next();
+};
+
+export { logReqInfo, logCompleteInfo, logError };
