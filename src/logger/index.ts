@@ -30,9 +30,6 @@ const logger: Logger = winston.createLogger({
 
   transports: [
     new transports.Console({
-      level: 'info',
-    }),
-    new transports.Console({
       level: 'debug',
     }),
   ],
