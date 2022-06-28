@@ -1,12 +1,18 @@
-import logger from '../logger';
 import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 
-function logReqInfo(req: Request, res: Response, next: NextFunction) {
+import logger from '../logger';
+import { CustomError } from '../errors';
+
+export function logReqInfo(req: Request, res: Response, next: NextFunction) {
   logger.info(`${req.method} ${req.path}`);
   next();
 }
 
-function logCompleteInfo(req: Request, res: Response, next: NextFunction) {
+export function logCompleteInfo(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   res.on('finish', () => {
     logger.info(
       `${req.method} ${req.originalUrl} : Response Status Code ${res.statusCode}`
@@ -18,13 +24,18 @@ function logCompleteInfo(req: Request, res: Response, next: NextFunction) {
 
 // TODO: customise TS to understand custom `err` type
 /**
- * Middleware to log the error to the correct transport. 
+ * Middleware to log the error to the correct transport.
  * @param err Error of custom type (eventually will be implemented)
  * @param req Request
  * @param res Response
  * @param next Next
  */
-const logError: ErrorRequestHandler = (err, req, res, next) => {
+export const logError: ErrorRequestHandler = (
+  err: CustomError,
+  req,
+  res,
+  next
+) => {
   logger.error(err.message);
   next();
 };
@@ -36,8 +47,11 @@ const logError: ErrorRequestHandler = (err, req, res, next) => {
  * @param res Response
  * @param next Next
  */
-const errorResponder: ErrorRequestHandler = (err, req, res, next) => {
-  res.status(err.statusCode).json(err);
-}
-
-export { logReqInfo, logCompleteInfo, logError };
+export const errorResponder: ErrorRequestHandler = (
+  err: CustomError,
+  req,
+  res,
+  next
+) => {
+  res.status(err.code).json(err);
+};
