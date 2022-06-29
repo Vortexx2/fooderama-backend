@@ -22,7 +22,6 @@ export function logCompleteInfo(
   next();
 }
 
-// TODO: customise TS to understand custom `err` type
 /**
  * Middleware to log the error to the correct transport.
  * @param err Error of custom type (eventually will be implemented)

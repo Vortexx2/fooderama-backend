@@ -34,7 +34,6 @@ syncDB(sequelize, false, true);
 
 app.use(logCompleteInfo);
 
-// TODO: Add good error handlers
 app.use(logError);
 app.use(errorResponder);
 

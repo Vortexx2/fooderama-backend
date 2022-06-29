@@ -10,7 +10,7 @@ interface RestaurantValidationConfig {
 export const restValidationConfig: RestaurantValidationConfig = {
   MIN_REST_LEN: 3,
   MAX_REST_LEN: 32,
-  MIN_DESC_LEN: 8,
+  MIN_DESC_LEN: 4,
   MAX_DESC_LEN: 256,
   MIN_RATING: 0,
   MAX_RATING: 5

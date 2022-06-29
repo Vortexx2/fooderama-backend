@@ -1,7 +1,4 @@
-import {
-  Sequelize,
-  DataTypes,
-} from 'sequelize';
+import { Sequelize, DataTypes } from 'sequelize';
 
 import { restValidationConfig } from '../../constants/restaurants';
 import Restaurant from './restaurants.class';
@@ -16,7 +13,6 @@ const {
   MAX_RATING,
 } = restValidationConfig;
 
-
 export default function (sequelize: Sequelize) {
   Restaurant.init(
     {
@@ -28,9 +24,12 @@ export default function (sequelize: Sequelize) {
       restName: {
         type: DataTypes.STRING(MAX_REST_LEN),
         allowNull: false,
-        unique: true,
+        unique: {
+          name: 'unique restName',
+          msg: 'restName must be unique',
+        },
         validate: {
-          len: [MIN_REST_LEN, MIN_DESC_LEN],
+          len: [MIN_REST_LEN, MAX_REST_LEN],
           isAlphanumeric: true,
         },
       },
@@ -40,12 +39,14 @@ export default function (sequelize: Sequelize) {
 
         validate: {
           len: [MIN_DESC_LEN, MAX_DESC_LEN],
-          isAlphanumeric: true,
+          isAlphanumeric: {
+            msg: 'Restaurant Name should be alphanumeric only',
+          },
         },
       },
       open: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
+        allowNull: true,
         defaultValue: true,
       },
       rating: {
@@ -63,13 +64,6 @@ export default function (sequelize: Sequelize) {
       closingTime: {
         type: DataTypes.TIME,
         allowNull: true,
-        validate: {
-          isValidClosingTime(closing: Date) {
-            if (closing < (this.openingTime as Date)) {
-              throw new Error('Closing time must be after opening time.');
-            }
-          },
-        },
       },
     },
     {

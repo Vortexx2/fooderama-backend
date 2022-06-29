@@ -9,10 +9,10 @@ class Restaurant extends Model<
   InferAttributes<Restaurant>,
   InferCreationAttributes<Restaurant>
 > {
-  declare id: number;
+  declare id: CreationOptional<number>;
   declare restName: string;
   declare description: CreationOptional<string>;
-  declare open: boolean;
+  declare open: CreationOptional<boolean>;
   declare rating: CreationOptional<number>;
   declare openingTime: CreationOptional<Date>;
   declare closingTime: CreationOptional<Date>;
