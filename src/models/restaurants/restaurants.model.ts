@@ -1,7 +1,13 @@
-import { Sequelize, DataTypes } from 'sequelize';
+import {
+  Sequelize,
+  DataTypes,
+  Model,
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+} from 'sequelize';
 
 import { restValidationConfig } from '../../constants/restaurants';
-import Restaurant from './restaurants.class';
 // Imports above
 
 const {
@@ -13,7 +19,22 @@ const {
   MAX_RATING,
 } = restValidationConfig;
 
-export default function (sequelize: Sequelize) {
+class Restaurant extends Model<
+  InferAttributes<Restaurant>,
+  InferCreationAttributes<Restaurant>
+> {
+  declare id: CreationOptional<number>;
+  declare restName: string;
+  declare description: CreationOptional<string>;
+  declare open: CreationOptional<boolean>;
+  declare rating: CreationOptional<number>;
+  declare openingTime: CreationOptional<Date>;
+  declare closingTime: CreationOptional<Date>;
+}
+
+export type restModel = typeof Restaurant;
+
+export function initRestaurant(sequelize: Sequelize) {
   Restaurant.init(
     {
       id: {
@@ -25,12 +46,14 @@ export default function (sequelize: Sequelize) {
         type: DataTypes.STRING(MAX_REST_LEN),
         allowNull: false,
         unique: {
-          name: 'unique restName',
-          msg: 'restName must be unique',
+          name: 'restName',
+          msg: 'Restaurant name must be unique',
         },
         validate: {
           len: [MIN_REST_LEN, MAX_REST_LEN],
-          isAlphanumeric: true,
+          isAlphanumeric: {
+            msg: 'Restaurant name should be alphanumeric only',
+          },
         },
       },
       description: {
@@ -38,9 +61,9 @@ export default function (sequelize: Sequelize) {
         allowNull: true,
 
         validate: {
-          len: [MIN_DESC_LEN, MAX_DESC_LEN],
-          isAlphanumeric: {
-            msg: 'Restaurant Name should be alphanumeric only',
+          len: {
+            args: [MIN_DESC_LEN, MAX_DESC_LEN],
+            msg: `Description must be between ${MIN_DESC_LEN} and ${MAX_DESC_LEN} characters in length`,
           },
         },
       },
@@ -53,8 +76,14 @@ export default function (sequelize: Sequelize) {
         type: DataTypes.FLOAT,
         allowNull: true,
         validate: {
-          min: MIN_RATING,
-          max: MAX_RATING,
+          min: {
+            args: [MIN_RATING],
+            msg: `Rating must be greater than or equal to ${MIN_RATING}`,
+          },
+          max: {
+            args: [MAX_RATING],
+            msg: `Rating must be lesser than or equal to ${MAX_RATING}`,
+          },
         },
       },
       openingTime: {

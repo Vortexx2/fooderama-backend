@@ -12,7 +12,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import logger from './logger';
 import router from './routes';
 import { logCompleteInfo, logError, errorResponder } from './middleware/logger';
-import { sequelize, checkDBConnection, syncDB } from './sequelize';
+import { db, checkDBConnection, syncDB } from './sequelize';
 // imports above
 
 require('dotenv').config();
@@ -29,8 +29,8 @@ app.use(
 );
 
 // perform all DB operations
-checkDBConnection(sequelize);
-syncDB(sequelize, false, true);
+checkDBConnection(db.sequelize);
+syncDB(db.sequelize, false, true);
 
 app.use(logCompleteInfo);
 

@@ -1,10 +1,10 @@
 import { Router } from 'express';
+import { UniqueConstraintError } from 'sequelize';
 
 import Restaurant from '../models/restaurants/restaurants.class';
 import * as restService from '../services/restaurants.service';
 import statusCodes from '../constants/status';
-import { BadRequest } from '../errors';
-import { sequelize } from '../sequelize';
+import { BadRequest, CustomError } from '../errors';
 import { BaseRestaurant } from '../declarations/restaurants';
 import logger from '../logger';
 
@@ -42,7 +42,7 @@ restRouter.post('/', async (req, res, next) => {
     const result = await restService.create(rest);
     res.status(statusCodes.OK).json(result);
   } catch (error: any) {
-    logger.error(error)
+    // TODO: Check fix for unique constraint error going to frontend
     next(error);
   }
 });

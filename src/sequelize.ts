@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 import config from 'config';
 
 import logger from './logger';
-import initRestaurant from './models/restaurants/restaurants.model';
+import { initRestaurant } from './models/restaurants/restaurants.model';
 
 interface DatabaseConfig {
   host: string;
@@ -61,7 +61,15 @@ const sequelize = new Sequelize(dbName, username, password, {
   },
 });
 
-// give sequelize instance control of all models
-const Restaurant = initRestaurant(sequelize);
+// TODO: Fix typing of models and db
+let models: { [key: string]: any } = {};
 
-export { sequelize, checkDBConnection, syncDB };
+// give sequelize instance control of all models
+models.Restaurant = initRestaurant(sequelize);
+
+const db = {
+  sequelize,
+  models
+};
+
+export { db, checkDBConnection, syncDB };
