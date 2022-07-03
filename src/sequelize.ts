@@ -2,7 +2,10 @@ import { Sequelize } from 'sequelize';
 import config from 'config';
 
 import logger from './logger';
-import { initRestaurant } from './models/restaurants/restaurants.model';
+import {
+  initRestaurant,
+  restModel,
+} from './models/restaurants/restaurants.model';
 
 interface DatabaseConfig {
   host: string;
@@ -61,15 +64,31 @@ const sequelize = new Sequelize(dbName, username, password, {
   },
 });
 
-// TODO: Fix typing of models and db
-let models: { [key: string]: any } = {};
+/**
+ * Keep adding each DB model you create to this interface for better typing elsewhere
+ */
+export interface modelsObject {
+  Restaurant: restModel;
+}
 
-// give sequelize instance control of all models
-models.Restaurant = initRestaurant(sequelize);
+export interface dbObject {
+  sequelize: Sequelize;
+  models: modelsObject;
+}
 
+// give the sequelize instance control of all of the models
+const Restaurant = initRestaurant(sequelize);
+let models: modelsObject = {
+  Restaurant,
+};
+
+/**
+ * the database instance allowing us to access all of the database models and sequelize instance to help us perform
+ * all of the business logic.
+ */
 const db = {
   sequelize,
-  models
+  models,
 };
 
 export { db, checkDBConnection, syncDB };

@@ -19,7 +19,7 @@ const {
   MAX_RATING,
 } = restValidationConfig;
 
-class Restaurant extends Model<
+export class Restaurant extends Model<
   InferAttributes<Restaurant>,
   InferCreationAttributes<Restaurant>
 > {

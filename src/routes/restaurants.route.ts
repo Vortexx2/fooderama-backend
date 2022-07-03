@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { UniqueConstraintError } from 'sequelize';
 
-import Restaurant from '../models/restaurants/restaurants.class';
 import * as restService from '../services/restaurants.service';
 import statusCodes from '../constants/status';
 import { BadRequest, CustomError } from '../errors';
