@@ -41,6 +41,6 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.send('Hello World');
 });
 
-app.use('/api/', router);
+app.use('/api/v1', router);
 
 export { app, config };

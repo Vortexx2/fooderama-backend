@@ -1,11 +1,10 @@
 import { Router } from 'express';
-import { UniqueConstraintError } from 'sequelize';
 
 import * as restService from '../services/restaurants.service';
 import statusCodes from '../constants/status';
-import { BadRequest, CustomError } from '../errors';
+import { BadRequest } from '../errors';
+import { validateIdParam } from '../middleware/routing';
 import { BaseRestaurant } from '../declarations/restaurants';
-import logger from '../logger';
 
 const restRouter = Router();
 
@@ -18,13 +17,10 @@ restRouter.get('/', async (req, res, next) => {
   }
 });
 
-restRouter.get('/:id', async (req, res, next) => {
+restRouter.get('/:id', validateIdParam, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10);
 
-    if (isNaN(id)) {
-      throw new BadRequest('Bad Parameter');
-    }
     const result = await restService.find(id);
     res.status(statusCodes.OK).json(result);
   } catch (error: any) {
@@ -42,6 +38,18 @@ restRouter.post('/', async (req, res, next) => {
     res.status(statusCodes.OK).json(result);
   } catch (error: any) {
     // TODO: Check fix for unique constraint error going to frontend
+    next(error);
+  }
+});
+
+restRouter.put('/:id', validateIdParam, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const rest: Partial<BaseRestaurant> = req.body;
+
+    const result = await restService.update(id, rest);
+    res.status(statusCodes.OK).json(result);
+  } catch (error: any) {
     next(error);
   }
 });
