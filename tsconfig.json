@@ -5,9 +5,17 @@
     "outDir": "./lib/",
     "rootDir": "./src/",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@constants/*": ["constants/*"],
+      "@declarations/*": ["declarations/*"],
+      "@middleware/*": ["middleware/*"],
+      "@models/*": ["models/*"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
+      "@utils/*": ["utils/*"]
+    }
   },
-  "exclude": [
-    "test"
-  ]
+  "exclude": ["test"]
 }

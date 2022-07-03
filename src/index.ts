@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import { app, config } from './app';
 import logger from './logger';
 

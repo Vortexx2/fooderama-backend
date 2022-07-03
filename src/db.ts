@@ -5,7 +5,7 @@ import logger from './logger';
 import {
   initRestaurant,
   restModel,
-} from './models/restaurants/restaurants.model';
+} from '@models/restaurants/restaurants.model';
 
 interface DatabaseConfig {
   host: string;
