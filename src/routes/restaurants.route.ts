@@ -1,10 +1,9 @@
 import { Router } from 'express';
 
-import * as restService from '../services/restaurants.service';
-import statusCodes from '../constants/status';
-import { BadRequest } from '../errors';
-import { validateIdParam } from '../middleware/routing';
-import { BaseRestaurant } from '../declarations/restaurants';
+import * as restService from '@services/restaurants.service';
+import statusCodes from '@constants/status';
+import { validateIdParam } from '@middleware/routing';
+import { BaseRestaurant } from '@declarations/restaurants';
 
 const restRouter = Router();
 

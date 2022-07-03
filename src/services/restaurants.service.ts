@@ -1,6 +1,6 @@
 import { db } from '../db';
-import { Restaurant } from '../models/restaurants/restaurants.model';
-import { BaseRestaurant } from '../declarations/restaurants';
+import { Restaurant } from '@models/restaurants/restaurants.model';
+import { BaseRestaurant } from '@declarations/restaurants';
 import { NotFound } from '../errors';
 
 const { models } = db;

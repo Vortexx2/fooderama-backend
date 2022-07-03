@@ -10,8 +10,8 @@ import express, { Request, Response, NextFunction } from 'express';
 // import sequelize from 'sequelize';
 
 import logger from './logger';
-import router from './routes';
-import { logCompleteInfo, logError, errorResponder } from './middleware/logger';
+import router from '@routes/index';
+import { logCompleteInfo, logError, errorResponder } from '@middleware/logger';
 import { db, checkDBConnection, syncDB } from './db';
 // imports above
 

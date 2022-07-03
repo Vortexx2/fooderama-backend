@@ -7,7 +7,7 @@ import {
   CreationOptional,
 } from 'sequelize';
 
-import { restValidationConfig } from '../../constants/restaurants';
+import { restValidationConfig } from '@constants/restaurants';
 // Imports above
 
 const {
