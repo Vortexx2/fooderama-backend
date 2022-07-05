@@ -29,7 +29,7 @@ restRouter.get('/:id', validateIdParam, async (req, res, next) => {
 
 restRouter.post('/', async (req, res, next) => {
   try {
-    const rest: BaseRestaurant = req.body;
+    const rest: BaseRestaurant | BaseRestaurant[] = req.body;
 
     // TODO: Check if validation is necessary here
 

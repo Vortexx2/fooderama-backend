@@ -1,4 +1,5 @@
-import 'module-alias/register';
+import 'tsconfig-paths/register'; 
+// the above package is needed for module aliases to work correctly while using ts-node
 import { app, config } from './app';
 import logger from './logger';
 

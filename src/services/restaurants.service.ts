@@ -15,8 +15,14 @@ export const find = async (id: number): Promise<Restaurant | null> => {
   return models.Restaurant.findByPk(id);
 };
 
-export const create = async (rest: BaseRestaurant): Promise<Restaurant> => {
-  return models.Restaurant.create(rest);
+export const create = async (
+  rest: BaseRestaurant | BaseRestaurant[]
+): Promise<Restaurant | Restaurant[]> => {
+  if (Array.isArray(rest)) {
+    return models.Restaurant.bulkCreate(rest);
+  } else {
+    return models.Restaurant.create(rest);
+  }
 };
 
 /**

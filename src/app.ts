@@ -30,7 +30,7 @@ app.use(
 
 // perform all DB operations
 checkDBConnection(db.sequelize);
-syncDB(db.sequelize, false, true);
+syncDB(db.sequelize, true, false);
 
 app.use(logCompleteInfo);
 
