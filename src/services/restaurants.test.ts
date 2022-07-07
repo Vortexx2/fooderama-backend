@@ -1,5 +1,5 @@
 import * as restService from './restaurants.service';
-import * as restaurants from '@constants/rest-mock-data.json';
+import { data as restaurants } from '@constants/rest-mock-data.json';
 import { BaseRestaurant } from '@declarations/restaurants';
 import { Restaurant } from '@models/restaurants/restaurants.model';
 
@@ -16,7 +16,7 @@ function restaurantObjectProperties() {
 }
 
 describe('restaurant service', () => {
-  it('should resolve with true (table has 0 records)', async () => {
+  test('should resolve with true (table has 0 records)', async () => {
     expect.assertions(1);
     const res = await restService.findAll();
     expect(res.length).toBe(0);
@@ -42,10 +42,37 @@ describe('restaurant service', () => {
   });
 
   test('create service with multiple records', async () => {
-    console.log(restaurants);
     const payload: Object[] = restaurants.slice(1);
-    const res = await restService.create(payload as BaseRestaurant[]);
+    try {
+      const res = await restService.create(payload as BaseRestaurant[]);
+      expect((res as Restaurant[]).length).toBe(payload.length);
+    } catch (err) {
+      console.log(err);
+    }
+  });
 
-    expect((res as Restaurant[]).length).toBe(payload.length);
+  test('findAll service has to have same length as data array', async () => {
+    const res = await restService.findAll();
+
+    expect(res.length).toBe(restaurants.length);
+  });
+
+  test('update service for a particular record', async () => {
+    const idToUpdate = 1;
+
+    const res = await restService.update(idToUpdate, {
+      rating: 4.55,
+    });
+
+    expect(res).toBeDefined();
+  });
+
+  test('delete service for a particular record', async () => {
+    const idToDelete = 3;
+    const res = await restService.del({
+      id: idToDelete,
+    });
+
+    expect(res).toBe(1);
   });
 });

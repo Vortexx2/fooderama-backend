@@ -19,7 +19,11 @@ export const create = async (
   rest: BaseRestaurant | BaseRestaurant[]
 ): Promise<Restaurant | Restaurant[]> => {
   if (Array.isArray(rest)) {
-    return models.Restaurant.bulkCreate(rest);
+    return models.Restaurant.bulkCreate(rest, {
+      // validate each row before entering in the DB
+      // will fail even if validation on one fails
+      validate: true,
+    });
   } else {
     return models.Restaurant.create(rest);
   }
@@ -44,4 +48,12 @@ export const update = async (
 
   const updatedRest = await rest.update(payload);
   return updatedRest;
+};
+
+export const del = async (whereObj: Partial<Restaurant>) => {
+  return await Restaurant.destroy({
+    where: {
+      ...whereObj,
+    },
+  });
 };

@@ -1,28 +1,37 @@
-[
-  {
-    "restName": "Zaika",
-    "description": "An Indian Restaurant",
-    "openingTime": "12:00",
-    "closingTime": "02:00"
-  },
-  {
-    "restName": "Saras",
-    "description": "Milkshakes and fruit juices, basically all of the beverages you can dream of",
-    "openingTime": "10:00",
-    "closingTime": "02:00"
-  },
-  {
-    "restName": "Crazy Chef",
-    "description": "Pizzas, rolls, burgers and sandwiches at an affordable price",
-    "rating": "4.3",
-    "openingTime": "12:00",
-    "closingTime": "02:00"
-  },
-  {
-    "restName": "Dialog Cafe",
-    "description": "Delicious food in all cuisines",
-    "rating": "3.9",
-    "openingTime": "18:00",
-    "closingTime": "02:00"
-  }
-]
+{
+  "data": [
+    {
+      "restName": "Zaika",
+      "description": "An Indian Restaurant",
+      "openingTime": "12:00",
+      "closingTime": "02:00"
+    },
+    {
+      "restName": "Saras",
+      "description": "Milkshakes and fruit juices, basically all of the beverages you can dream of",
+      "openingTime": "10:00",
+      "closingTime": "02:00"
+    },
+    {
+      "restName": "Crazy Chef",
+      "description": "Pizzas, rolls, burgers and sandwiches at an affordable price",
+      "rating": 4.3,
+      "openingTime": "12:00",
+      "closingTime": "02:00"
+    },
+    {
+      "restName": "Dialog Cafe",
+      "description": "Delicious food in all cuisines",
+      "rating": 3.9,
+      "openingTime": "18:00",
+      "closingTime": "02:00"
+    },
+    {
+      "restName": "Dev Sweets & Snacks",
+      "description": "Desserts, milkshakes, cold coffee and snacks like sandwiches",
+      "rating": 4.3,
+      "openingTime": "18:00",
+      "closingTime": "02:00"
+    }
+  ]
+}

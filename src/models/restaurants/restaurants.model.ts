@@ -51,9 +51,6 @@ export function initRestaurant(sequelize: Sequelize) {
         },
         validate: {
           len: [MIN_REST_LEN, MAX_REST_LEN],
-          isAlphanumeric: {
-            msg: 'Restaurant name should be alphanumeric only',
-          },
         },
       },
       description: {

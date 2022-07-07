@@ -4,6 +4,7 @@ import * as restService from '@services/restaurants.service';
 import statusCodes from '@constants/status';
 import { validateIdParam } from '@middleware/routing';
 import { BaseRestaurant } from '@declarations/restaurants';
+import { Restaurant } from '@models/restaurants/restaurants.model';
 
 const restRouter = Router();
 
@@ -48,6 +49,31 @@ restRouter.put('/:id', validateIdParam, async (req, res, next) => {
 
     const result = await restService.update(id, rest);
     res.status(statusCodes.OK).json(result);
+  } catch (error: any) {
+    next(error);
+  }
+});
+
+restRouter.delete('/:id', validateIdParam, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const where: Partial<Restaurant> = req.body;
+
+    where['id'] = id;
+
+    const deletedRows = await restService.del(where);
+    res.status(statusCodes.OK).json({ deletedRows });
+  } catch (error: any) {
+    next(error);
+  }
+});
+
+restRouter.delete('/', async (req, res, next) => {
+  try {
+    const where: Partial<Restaurant> = req.body;
+
+    const deletedRows = await restService.del(where);
+    res.status(statusCodes.OK).json({ deletedRows });
   } catch (error: any) {
     next(error);
   }
