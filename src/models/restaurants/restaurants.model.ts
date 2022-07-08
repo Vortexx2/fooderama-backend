@@ -50,7 +50,10 @@ export function initRestaurant(sequelize: Sequelize) {
           msg: 'Restaurant name must be unique',
         },
         validate: {
-          len: [MIN_REST_LEN, MAX_REST_LEN],
+          len: {
+            args: [MIN_REST_LEN, MAX_REST_LEN],
+            msg: `restName must be between ${MIN_REST_LEN} and ${MAX_REST_LEN} characters in length`,
+          },
         },
       },
       description: {

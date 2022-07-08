@@ -5,8 +5,18 @@ import statusCodes from '@constants/status';
 import { validateIdParam } from '@middleware/routing';
 import { BaseRestaurant } from '@declarations/restaurants';
 import { Restaurant } from '@models/restaurants/restaurants.model';
+import { assignPropsToObject } from '@utils/routes.util';
 
 const restRouter = Router();
+
+let props = [
+  'restName',
+  'description',
+  'open',
+  'rating',
+  'openingTime',
+  'closingTime',
+];
 
 restRouter.get('/', async (req, res, next) => {
   try {
@@ -29,12 +39,28 @@ restRouter.get('/:id', validateIdParam, async (req, res, next) => {
 });
 
 restRouter.post('/', async (req, res, next) => {
+  let creationObject: BaseRestaurant[] | BaseRestaurant;
+
   try {
-    const rest: BaseRestaurant | BaseRestaurant[] = req.body;
+    const { body } = req;
 
-    // TODO: Check if validation is necessary here
+    // incoming req body is an Array
+    if (Array.isArray(body)) {
+      let restArr: BaseRestaurant[] = [];
+      body.map((indRest: { [key: string]: any }) => {
+        restArr.push(assignPropsToObject(props, indRest) as BaseRestaurant);
+      });
 
-    const result = await restService.create(rest);
+      creationObject = restArr;
+    }
+    // incoming req body is an Object
+    else {
+      creationObject = assignPropsToObject(props, body) as BaseRestaurant;
+    }
+
+    // TODO: Check if req.body is an array first
+    const result = await restService.create(creationObject);
+
     res.status(statusCodes.OK).json(result);
   } catch (error: any) {
     // TODO: Check fix for unique constraint error going to frontend
@@ -45,7 +71,9 @@ restRouter.post('/', async (req, res, next) => {
 restRouter.put('/:id', validateIdParam, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const rest: Partial<BaseRestaurant> = req.body;
+    const { body } = req;
+
+    const rest = assignPropsToObject(props, body);
 
     const result = await restService.update(id, rest);
     res.status(statusCodes.OK).json(result);
@@ -70,7 +98,10 @@ restRouter.delete('/:id', validateIdParam, async (req, res, next) => {
 
 restRouter.delete('/', async (req, res, next) => {
   try {
-    const where: Partial<Restaurant> = req.body;
+    const { body } = req;
+    const whereProps = props;
+    whereProps.push('id', 'createdAt', 'updatedAt');
+    const where: Partial<Restaurant> = assignPropsToObject(whereProps, body);
 
     const deletedRows = await restService.del(where);
     res.status(statusCodes.OK).json({ deletedRows });
