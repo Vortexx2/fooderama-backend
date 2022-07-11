@@ -8,7 +8,7 @@ export interface BaseRestaurant {
 }
 
 export interface Restaurant extends BaseRestaurant {
-  id: number;
+  restId: number;
   createdAt: Date;
   updatedAt: Date;
 }

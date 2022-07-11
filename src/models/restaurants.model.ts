@@ -23,7 +23,7 @@ export class Restaurant extends Model<
   InferAttributes<Restaurant>,
   InferCreationAttributes<Restaurant>
 > {
-  declare id: CreationOptional<number>;
+  declare restId: CreationOptional<number>;
   declare restName: string;
   declare description: CreationOptional<string>;
   declare open: CreationOptional<boolean>;
@@ -37,7 +37,7 @@ export type restModel = typeof Restaurant;
 export function initRestaurant(sequelize: Sequelize) {
   Restaurant.init(
     {
-      id: {
+      restId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,

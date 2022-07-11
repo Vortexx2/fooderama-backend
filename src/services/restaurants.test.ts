@@ -5,7 +5,7 @@ import { Restaurant } from '@models/restaurants.model';
 
 function restaurantObjectProperties() {
   return [
-    'id',
+    'restId',
     'restName',
     'description',
     'open',
@@ -70,7 +70,7 @@ describe('restaurant service', () => {
   test('delete service for a particular record', async () => {
     const idToDelete = 3;
     const res = await restService.del({
-      id: idToDelete,
+      restId: idToDelete,
     });
 
     expect(res).toBe(1);

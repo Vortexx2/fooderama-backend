@@ -86,7 +86,7 @@ restRouter.delete('/:id', validateIdParam, async (req, res, next) => {
     const id = parseInt(req.params.id, 10);
     const where: Partial<Restaurant> = req.body;
 
-    where['id'] = id;
+    where['restId'] = id;
 
     const deletedRows = await restService.del(where);
     res.status(statusCodes.OK).json({ deletedRows });
