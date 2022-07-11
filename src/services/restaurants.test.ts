@@ -1,7 +1,7 @@
 import * as restService from './restaurants.service';
 import { data as restaurants } from '@constants/rest-mock-data.json';
 import { BaseRestaurant } from '@declarations/restaurants';
-import { Restaurant } from '@models/restaurants/restaurants.model';
+import { Restaurant } from '@models/restaurants.model';
 
 function restaurantObjectProperties() {
   return [

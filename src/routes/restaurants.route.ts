@@ -4,7 +4,7 @@ import * as restService from '@services/restaurants.service';
 import statusCodes from '@constants/status';
 import { validateIdParam } from '@middleware/routing';
 import { BaseRestaurant } from '@declarations/restaurants';
-import { Restaurant } from '@models/restaurants/restaurants.model';
+import { Restaurant } from '@models/restaurants.model';
 import { assignPropsToObject } from '@utils/routes.util';
 
 const restRouter = Router();
@@ -58,7 +58,6 @@ restRouter.post('/', async (req, res, next) => {
       creationObject = assignPropsToObject(props, body) as BaseRestaurant;
     }
 
-    // TODO: Check if req.body is an array first
     const result = await restService.create(creationObject);
 
     res.status(statusCodes.OK).json(result);
