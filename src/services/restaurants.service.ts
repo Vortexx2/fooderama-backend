@@ -33,7 +33,8 @@ export const create = async (
  * The update method definition for the REST API for restaurants. The `rest` object that will be sent will have
  * all of the fields that restaurant has, even if it is not provided by the user, they will be updated by
  * both the frontend logic and logic on the backend.
- * @param rest A complete restaurant object with the parameters that need to be changed are changed as necessary
+ * @param id id of the record you wanna update
+ * @param payload object that has the fields that it wants to update of the selected record
  */
 export const update = async (
   id: number,
