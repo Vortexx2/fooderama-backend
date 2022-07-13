@@ -18,6 +18,8 @@ export class Dish extends Model<
   declare description: CreationOptional<string>;
 }
 
+export type dishModel = typeof Dish;
+
 export function initDish(sequelize: Sequelize) {
   Dish.init(
     {
@@ -52,4 +54,6 @@ export function initDish(sequelize: Sequelize) {
       timestamps: true,
     }
   );
+
+  return Dish;
 }

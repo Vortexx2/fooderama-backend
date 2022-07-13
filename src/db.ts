@@ -4,6 +4,8 @@ import config from 'config';
 import logger from './logger';
 import { initRestaurant, restModel } from '@models/restaurants.model';
 import { initMenu, menuModel } from '@models/menus.model';
+import { initCategory, categoryModel } from '@models/categories.model';
+import { initDish, dishModel } from '@models/dishes.model';
 
 interface DatabaseConfig {
   host: string;
@@ -68,6 +70,8 @@ const sequelize = new Sequelize(dbName, username, password, {
 export interface modelsObject {
   Restaurant: restModel;
   Menu: menuModel;
+  Category: categoryModel;
+  Dish: dishModel;
 }
 
 export interface dbObject {
@@ -78,9 +82,13 @@ export interface dbObject {
 // give the sequelize instance control of all of the models
 const Restaurant = initRestaurant(sequelize);
 const Menu = initMenu(sequelize);
+const Category = initCategory(sequelize);
+const Dish = initDish(sequelize);
 let models: modelsObject = {
   Restaurant,
-  Menu
+  Menu,
+  Category,
+  Dish,
 };
 
 /**
