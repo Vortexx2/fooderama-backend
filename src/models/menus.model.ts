@@ -7,8 +7,6 @@ import {
   CreationOptional,
 } from 'sequelize';
 
-import { Restaurant } from './restaurants.model';
-import { Category } from './categories.model';
 // imports above
 
 export class Menu extends Model<
@@ -36,23 +34,5 @@ export function initMenu(sequelize: Sequelize) {
   );
 
   // associations
-  Restaurant.hasOne(Menu, {
-    foreignKey: {
-      allowNull: false,
-    },
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
-  });
-  Menu.belongsTo(Restaurant);
-
-  // Menu.hasMany(Category, {
-  //   foreignKey: {
-  //     allowNull: false,
-  //   },
-  //   onDelete: 'SET NULL',
-  //   onUpdate: 'CASCADE',
-  // });
-  // Category.belongsTo(Menu);
-
   return Menu;
 }

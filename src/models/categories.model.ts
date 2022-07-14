@@ -65,14 +65,5 @@ export function initCategory(sequelize: Sequelize) {
     }
   );
 
-  Category.hasMany(Dish, {
-    foreignKey: {
-      allowNull: false,
-    },
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
-  });
-  Dish.hasOne(Category);
-
   return Category;
 }

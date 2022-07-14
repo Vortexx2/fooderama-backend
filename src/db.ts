@@ -84,6 +84,39 @@ const Restaurant = initRestaurant(sequelize);
 const Menu = initMenu(sequelize);
 const Category = initCategory(sequelize);
 const Dish = initDish(sequelize);
+
+// associations
+
+Menu.hasMany(Category, {
+  foreignKey: {
+    name: 'menuId',
+    allowNull: false,
+  },
+  onDelete: 'SET NULL',
+  onUpdate: 'CASCADE',
+});
+Category.belongsTo(Menu);
+
+Restaurant.hasOne(Menu, {
+  foreignKey: {
+    name: 'restId',
+    allowNull: false,
+  },
+  onDelete: 'SET NULL',
+  onUpdate: 'CASCADE',
+});
+Menu.belongsTo(Restaurant);
+
+Category.hasMany(Dish, {
+  foreignKey: {
+    name: 'categoryId',
+    allowNull: false,
+  },
+  onDelete: 'SET NULL',
+  onUpdate: 'CASCADE',
+});
+Dish.hasOne(Category);
+
 let models: modelsObject = {
   Restaurant,
   Menu,
