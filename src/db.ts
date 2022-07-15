@@ -2,10 +2,10 @@ import { Sequelize } from 'sequelize';
 import config from 'config';
 
 import logger from './logger';
-import { initRestaurant, restModel } from '@models/restaurants.model';
-import { initMenu, menuModel } from '@models/menus.model';
-import { initCategory, categoryModel } from '@models/categories.model';
-import { initDish, dishModel } from '@models/dishes.model';
+import { initRestaurant } from '@models/restaurants.model';
+import { initMenu } from '@models/menus.model';
+import { initCategory } from '@models/categories.model';
+import { initDish } from '@models/dishes.model';
 
 interface DatabaseConfig {
   host: string;
@@ -64,21 +64,6 @@ const sequelize = new Sequelize(dbName, username, password, {
   },
 });
 
-/**
- * Keep adding each DB model you create to this interface for better typing elsewhere
- */
-export interface modelsObject {
-  Restaurant: restModel;
-  Menu: menuModel;
-  Category: categoryModel;
-  Dish: dishModel;
-}
-
-export interface dbObject {
-  sequelize: Sequelize;
-  models: modelsObject;
-}
-
 // give the sequelize instance control of all of the models
 const Restaurant = initRestaurant(sequelize);
 const Menu = initMenu(sequelize);
@@ -117,7 +102,10 @@ Category.hasMany(Dish, {
 });
 Dish.hasOne(Category);
 
-let models: modelsObject = {
+/**
+ * The object where all of the intialised models are stored for later reference.
+ */
+let models = {
   Restaurant,
   Menu,
   Category,
@@ -125,8 +113,7 @@ let models: modelsObject = {
 };
 
 /**
- * the database instance allowing us to access all of the database models and sequelize instance to help us perform
- * all of the business logic.
+ * The database instance allowing us to access all of the database models and sequelize instance to help us perform all of the business logic.
  */
 const db = {
   sequelize,
