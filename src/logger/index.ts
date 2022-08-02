@@ -1,5 +1,5 @@
-import winston, { Logger, transports, format } from 'winston';
-const { combine, timestamp, json, prettyPrint, colorize, printf } = format;
+import winston, { Logger, transports, format } from 'winston'
+const { combine, timestamp, json, prettyPrint, colorize, printf } = format
 
 const customLevels = {
   levels: {
@@ -14,11 +14,11 @@ const customLevels = {
     info: 'blue',
     debug: 'green',
   },
-};
+}
 
 const myFormat = printf(({ level, message, timestamp }) => {
-  return `${timestamp} ${level}: ${message}`;
-});
+  return `${timestamp} ${level}: ${message}`
+})
 
 const logger: Logger = winston.createLogger({
   levels: customLevels.levels,
@@ -33,8 +33,8 @@ const logger: Logger = winston.createLogger({
       level: 'debug',
     }),
   ],
-});
+})
 
-winston.addColors(customLevels.colors);
+winston.addColors(customLevels.colors)
 
-export default logger;
+export default logger

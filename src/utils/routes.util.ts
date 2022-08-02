@@ -7,12 +7,12 @@ export function assignPropsToObject(
   propArr: string[],
   obj: { [key: string]: any }
 ) {
-  let resObject: { [key: string]: any } = {};
+  let resObject: { [key: string]: any } = {}
   propArr.map((prop: string) => {
     if (obj.hasOwnProperty(prop)) {
-      resObject[prop] = obj[prop];
+      resObject[prop] = obj[prop]
     }
-  });
+  })
 
-  return resObject;
+  return resObject
 }

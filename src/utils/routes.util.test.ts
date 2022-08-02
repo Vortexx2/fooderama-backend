@@ -1,4 +1,4 @@
-import { assignPropsToObject } from './routes.util';
+import { assignPropsToObject } from './routes.util'
 
 // imports above
 
@@ -10,14 +10,14 @@ describe('check route util functions', () => {
       c: {
         d: [1, 2, 3],
       },
-    };
+    }
 
-    const props = ['a', 'c'];
+    const props = ['a', 'c']
     const expectedObject = {
       a: inpObject['a'],
       c: inpObject['c'],
-    };
+    }
 
-    expect(assignPropsToObject(props, inpObject)).toEqual(expectedObject);
-  });
-});
+    expect(assignPropsToObject(props, inpObject)).toEqual(expectedObject)
+  })
+})
