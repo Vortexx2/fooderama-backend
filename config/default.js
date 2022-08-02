@@ -4,7 +4,7 @@ require('dotenv').config();
 
 module.exports = {
   host: 'localhost',
-  port: 3000,
+  port: 4000,
   postgres: 'postgres://compose-postgres:1234/fooderama-test', // this is not being used
   dbConfig: {
     port: 1234,
