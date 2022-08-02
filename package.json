@@ -7,7 +7,14 @@
     "test:unit": "NODE_CONFIG_ENV=test && jest",
     "dev": "NODE_CONFIG_ENV=development && ts-node-dev --no-notify ./src",
     "compile": "shx rm -rf ./lib/ && tsc",
-    "start": "npm run compile && node lib/"
+    "start": "npm run compile && node lib/",
+    "prepare": "husky install",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,json,yml}": [
+      "prettier --write"
+    ]
   },
   "_moduleAliases": {
     "@constants": "lib/constants",
@@ -45,7 +52,10 @@
     "@types/sequelize": "^4.28.13",
     "@types/serve-favicon": "^2.5.3",
     "@types/supertest": "^2.0.12",
+    "husky": "^8.0.1",
     "jest": "^28.1.2",
+    "lint-staged": "^13.0.3",
+    "prettier": "^2.7.1",
     "sequelize-cli": "^6.4.1",
     "shx": "^0.3.4",
     "supertest": "^6.2.4",
