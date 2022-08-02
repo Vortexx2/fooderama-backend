@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config()
 // All default config settings are defined below
 // They can be imported anywhere through config.get('attr')
 
@@ -13,4 +13,4 @@ module.exports = {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASS,
   },
-};
+}

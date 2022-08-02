@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { BadRequest } from '../errors';
+import { Request, Response, NextFunction } from 'express'
+import { BadRequest } from '../errors'
 
 /**
  * Validate the id parameter in the request and throws a `BadRequest` if it is not in a valid ID format.
@@ -13,14 +13,14 @@ export function validateIdParam(
   next: NextFunction
 ) {
   try {
-    const id = parseInt(req.params.id, 10);
+    const id = parseInt(req.params.id, 10)
 
     if (isNaN(id)) {
-      throw new BadRequest('Bad Parameter');
+      throw new BadRequest('Bad Parameter')
     }
 
-    next();
+    next()
   } catch (error: any) {
-    next(error);
+    next(error)
   }
 }

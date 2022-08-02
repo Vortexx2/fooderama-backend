@@ -5,9 +5,9 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-} from 'sequelize';
+} from 'sequelize'
 
-import { restValidationConfig } from '@constants/restaurants';
+import { restValidationConfig } from '@constants/restaurants'
 // Imports above
 
 const {
@@ -17,22 +17,22 @@ const {
   MIN_DESC_LEN,
   MIN_RATING,
   MAX_RATING,
-} = restValidationConfig;
+} = restValidationConfig
 
 export class Restaurant extends Model<
   InferAttributes<Restaurant>,
   InferCreationAttributes<Restaurant>
 > {
-  declare restId: CreationOptional<number>;
-  declare restName: string;
-  declare description: CreationOptional<string>;
-  declare open: CreationOptional<boolean>;
-  declare rating: CreationOptional<number>;
-  declare openingTime: CreationOptional<Date>;
-  declare closingTime: CreationOptional<Date>;
+  declare restId: CreationOptional<number>
+  declare restName: string
+  declare description: CreationOptional<string>
+  declare open: CreationOptional<boolean>
+  declare rating: CreationOptional<number>
+  declare openingTime: CreationOptional<Date>
+  declare closingTime: CreationOptional<Date>
 }
 
-export type restModel = typeof Restaurant;
+export type restModel = typeof Restaurant
 
 export function initRestaurant(sequelize: Sequelize) {
   Restaurant.init(
@@ -99,7 +99,7 @@ export function initRestaurant(sequelize: Sequelize) {
       timestamps: true,
       sequelize,
     }
-  );
+  )
 
-  return Restaurant;
+  return Restaurant
 }

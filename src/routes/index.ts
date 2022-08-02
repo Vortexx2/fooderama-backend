@@ -1,8 +1,8 @@
-import { Router } from 'express';
-import restRouter from './restaurants.route';
+import { Router } from 'express'
+import restRouter from './restaurants.route'
 
-const router = Router();
+const router = Router()
 
-router.use('/restaurants', restRouter);
+router.use('/restaurants', restRouter)
 
-export default router;
+export default router

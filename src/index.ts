@@ -1,15 +1,15 @@
-import 'tsconfig-paths/register'; 
+import 'tsconfig-paths/register'
 // the above package is needed for module aliases to work correctly while using ts-node
-import { app, config } from './app';
-import logger from './logger';
+import { app, config } from './app'
+import logger from './logger'
 
-const port: number = config.has('port') ? config.get('port') : 3000;
-const host: string = config.get('host');
+const port: number = config.has('port') ? config.get('port') : 3000
+const host: string = config.get('host')
 
 process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason);
-});
+  console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
+})
 
 const server = app.listen(port, host, () => {
-  logger.info(`Listening on port ${port}`);
-});
+  logger.info(`Listening on port ${port}`)
+})
