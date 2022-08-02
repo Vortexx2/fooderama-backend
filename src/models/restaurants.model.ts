@@ -8,6 +8,8 @@ import {
 } from 'sequelize'
 
 import { restValidationConfig } from '@constants/restaurants'
+
+import config from 'config'
 // Imports above
 
 const {
@@ -25,6 +27,7 @@ export class Restaurant extends Model<
 > {
   declare restId: CreationOptional<number>
   declare restName: string
+  declare restImage: CreationOptional<string>
   declare description: CreationOptional<string>
   declare open: CreationOptional<boolean>
   declare rating: CreationOptional<number>
@@ -53,6 +56,16 @@ export function initRestaurant(sequelize: Sequelize) {
           len: {
             args: [MIN_REST_LEN, MAX_REST_LEN],
             msg: `restName must be between ${MIN_REST_LEN} and ${MAX_REST_LEN} characters in length`,
+          },
+        },
+      },
+      restImage: {
+        type: DataTypes.STRING(),
+        allowNull: false,
+        defaultValue: config.get('defaultRestaurantImage'),
+        validate: {
+          isUrl: {
+            msg: 'Restaurant image URL must be a valid URL',
           },
         },
       },
