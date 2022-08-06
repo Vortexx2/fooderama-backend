@@ -1,3 +1,5 @@
+import { Restaurant } from '@models/restaurants.model'
+
 export interface BaseRestaurant {
   restName: string
   description?: string
@@ -7,8 +9,11 @@ export interface BaseRestaurant {
   closingTime?: Date
 }
 
-export interface Restaurant extends BaseRestaurant {
+export interface FullRestaurant extends BaseRestaurant {
   restId: number
   createdAt: Date
   updatedAt: Date
 }
+
+export type RestObjOrArr<T extends BaseRestaurant | BaseRestaurant[]> =
+  T extends BaseRestaurant ? Restaurant : Restaurant[]

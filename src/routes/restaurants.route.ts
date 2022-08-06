@@ -6,11 +6,19 @@ import { validateIdParam } from '@middleware/routing'
 import { BaseRestaurant } from '@declarations/restaurants'
 import { Restaurant } from '@models/restaurants.model'
 import { assignPropsToObject } from '@utils/routes.util'
+// Imports Above
 
+/**
+ * A new individual restaurant router for integration into the main router.
+ */
 const restRouter = Router()
 
+/**
+ * The properties that need to be extracted from the request body to be inserted into the database.
+ */
 let props = [
   'restName',
+  'restImage',
   'description',
   'open',
   'rating',
@@ -18,15 +26,17 @@ let props = [
   'closingTime',
 ]
 
+// the GET all route, does not perform any operations on the queried data from the DB
 restRouter.get('/', async (req, res, next) => {
   try {
     const result = await restService.findAll()
     res.status(statusCodes.OK).json(result)
   } catch (error: any) {
-    res.status(statusCodes['Internal Server Error']).send(error.message)
+    next(error)
   }
 })
 
+// the GET id route, performs check to see if provided id is of a valid format. Does not perform any operations on the queried data from the DB
 restRouter.get('/:id', validateIdParam, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10)
@@ -38,6 +48,7 @@ restRouter.get('/:id', validateIdParam, async (req, res, next) => {
   }
 })
 
+// the POST route, extracts all the registered props on the model from the body, and then performs the create query on the DB
 restRouter.post('/', async (req, res, next) => {
   let creationObject: BaseRestaurant[] | BaseRestaurant
 
@@ -67,6 +78,7 @@ restRouter.post('/', async (req, res, next) => {
   }
 })
 
+// the UPDATE route, checks if provided `id` is of a valid format and then extracts only the registered properties from the request body and then calls the `update` sequelize method
 restRouter.put('/:id', validateIdParam, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10)
@@ -81,6 +93,7 @@ restRouter.put('/:id', validateIdParam, async (req, res, next) => {
   }
 })
 
+// the DELETE route, validates the `id` param first, and then uses a `where` object (according to the sequelize where clause) in the body to filter those records with the respective
 restRouter.delete('/:id', validateIdParam, async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10)
@@ -95,6 +108,7 @@ restRouter.delete('/:id', validateIdParam, async (req, res, next) => {
   }
 })
 
+// the DELETE route, the body is the where clause similar to the `WHERE` in SQL.
 restRouter.delete('/', async (req, res, next) => {
   try {
     const { body } = req
