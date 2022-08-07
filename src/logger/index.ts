@@ -1,5 +1,5 @@
 import winston, { Logger, transports, format } from 'winston'
-const { combine, timestamp, json, prettyPrint, colorize, printf } = format
+const { combine, timestamp, colorize, printf } = format
 
 const customLevels = {
   levels: {

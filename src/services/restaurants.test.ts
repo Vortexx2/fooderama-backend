@@ -33,7 +33,8 @@ describe('restaurant service', () => {
 
     expect.assertions(restProps.length)
 
-    const payload: Object = restaurants[0]
+    // TODO: Fix type of payload
+    const payload: any = restaurants[0]
     const res = await restService.create(payload as BaseRestaurant)
 
     restProps.map((prop: string) => {
@@ -42,7 +43,8 @@ describe('restaurant service', () => {
   })
 
   test('create service with multiple records', async () => {
-    const payload: Object[] = restaurants.slice(1)
+    // TODO: Fix type of payload
+    const payload: any[] = restaurants.slice(1)
     try {
       const res = await restService.create(payload as BaseRestaurant[])
       expect((res as Restaurant[]).length).toBe(payload.length)

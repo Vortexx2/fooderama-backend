@@ -7,9 +7,9 @@ export function assignPropsToObject(
   propArr: string[],
   obj: { [key: string]: any }
 ) {
-  let resObject: { [key: string]: any } = {}
+  const resObject: { [key: string]: any } = {}
   propArr.map((prop: string) => {
-    if (obj.hasOwnProperty(prop)) {
+    if (prop in obj) {
       resObject[prop] = obj[prop]
     }
   })

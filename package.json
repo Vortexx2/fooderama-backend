@@ -8,12 +8,16 @@
     "dev": "NODE_CONFIG_ENV=development && ts-node-dev --no-notify ./src",
     "compile": "shx rm -rf ./lib/ && tsc",
     "start": "npm run compile && node lib/",
+    "lint": "eslint ./src --ext .js,.ts",
     "prepare": "husky install",
     "precommit": "lint-staged"
   },
   "lint-staged": {
     "**/*.{js,ts,json,yml}": [
       "prettier --write"
+    ],
+    "**/*.{js,ts}": [
+      "eslint"
     ]
   },
   "_moduleAliases": {
@@ -52,6 +56,9 @@
     "@types/sequelize": "^4.28.13",
     "@types/serve-favicon": "^2.5.3",
     "@types/supertest": "^2.0.12",
+    "@typescript-eslint/eslint-plugin": "^5.32.0",
+    "@typescript-eslint/parser": "^5.32.0",
+    "eslint": "^8.21.0",
     "husky": "^8.0.1",
     "jest": "^28.1.2",
     "lint-staged": "^13.0.3",

@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    // to enable additional rules
+    "semi": ["error", "never"],
+    "quotes": ["error", "single"],
+    "linebreak-style": ["error", "unix"],
+    "indent": ["error", 2, { "VariableDeclarator": "first" }],
+
+    // typescript specific
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}

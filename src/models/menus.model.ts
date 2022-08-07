@@ -5,7 +5,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-} from 'sequelize';
+} from 'sequelize'
 
 // imports above
 
@@ -13,10 +13,10 @@ export class Menu extends Model<
   InferAttributes<Menu>,
   InferCreationAttributes<Menu>
 > {
-  declare menuId: CreationOptional<number>;
+  declare menuId: CreationOptional<number>
 }
 
-export type menuModel = typeof Menu;
+export type menuModel = typeof Menu
 
 export function initMenu(sequelize: Sequelize) {
   Menu.init(
@@ -31,8 +31,8 @@ export function initMenu(sequelize: Sequelize) {
       sequelize,
       timestamps: true,
     }
-  );
+  )
 
   // associations
-  return Menu;
+  return Menu
 }

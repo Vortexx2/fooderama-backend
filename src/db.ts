@@ -36,8 +36,8 @@ async function checkDBConnection(seq: Sequelize): Promise<void> {
  */
 async function syncDB(
   seq: Sequelize,
-  force: boolean = false,
-  alter: boolean = false
+  force = false,
+  alter = false
 ): Promise<void> {
   try {
     await seq.sync({
@@ -105,7 +105,7 @@ Dish.hasOne(Category)
 /**
  * The object where all of the intialised models are stored for later reference.
  */
-let models = {
+const models = {
   Restaurant,
   Menu,
   Category,

@@ -49,8 +49,7 @@ export const logError: ErrorRequestHandler = (
 export const errorResponder: ErrorRequestHandler = (
   err: CustomError,
   req,
-  res,
-  next
+  res
 ) => {
   res.status(err.code).json(err)
 }

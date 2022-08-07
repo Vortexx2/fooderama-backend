@@ -10,6 +10,7 @@ process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise ', p, ' reason: ', reason)
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const server = app.listen(port, host, () => {
   logger.info(`Listening on port ${port}`)
 })

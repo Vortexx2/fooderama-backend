@@ -5,9 +5,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-} from 'sequelize';
-
-import { Dish } from './dishes.model';
+} from 'sequelize'
 
 // imports above
 
@@ -17,18 +15,18 @@ const config = {
   MAX_CAT_LEN: 50,
   MIN_DESC_LEN: 5,
   MAX_DESC_LEN: 256,
-};
+}
 
 export class Category extends Model<
   InferAttributes<Category>,
   InferCreationAttributes<Category>
 > {
-  declare categoryId: CreationOptional<number>;
-  declare categoryName: string;
-  declare description: CreationOptional<string>;
+  declare categoryId: CreationOptional<number>
+  declare categoryName: string
+  declare description: CreationOptional<string>
 }
 
-export type categoryModel = typeof Category;
+export type categoryModel = typeof Category
 
 export function initCategory(sequelize: Sequelize) {
   Category.init(
@@ -63,7 +61,7 @@ export function initCategory(sequelize: Sequelize) {
       sequelize,
       timestamps: true,
     }
-  );
+  )
 
-  return Category;
+  return Category
 }

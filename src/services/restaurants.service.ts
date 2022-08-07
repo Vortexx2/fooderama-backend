@@ -34,9 +34,6 @@ export const find = async (id: number) => {
 export const create = async <T extends BaseRestaurant | BaseRestaurant[]>(
   rest: T
 ): Promise<RestObjOrArr<T>> => {
-  // the thing to be returned
-  let res: Restaurant | Restaurant[]
-
   // check if the argument is an array
   if (Array.isArray(rest)) {
     return models.Restaurant.bulkCreate(rest, {

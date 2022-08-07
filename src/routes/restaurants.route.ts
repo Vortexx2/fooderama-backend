@@ -16,7 +16,7 @@ const restRouter = Router()
 /**
  * The properties that need to be extracted from the request body to be inserted into the database.
  */
-let props = [
+const props = [
   'restName',
   'restImage',
   'description',
@@ -57,7 +57,7 @@ restRouter.post('/', async (req, res, next) => {
 
     // incoming req body is an Array
     if (Array.isArray(body)) {
-      let restArr: BaseRestaurant[] = []
+      const restArr: BaseRestaurant[] = []
       body.map((indRest: { [key: string]: any }) => {
         restArr.push(assignPropsToObject(props, indRest) as BaseRestaurant)
       })

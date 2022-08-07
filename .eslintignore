@@ -1,0 +1,10 @@
+# packages that must be ignored
+node_modules/
+
+# directories that are made automatically
+.husky/
+lib/
+
+# individual files that reside in the root directory
+jest.config.js
+*.json

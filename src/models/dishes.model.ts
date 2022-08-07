@@ -5,20 +5,20 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-} from 'sequelize';
+} from 'sequelize'
 
-import { menuValidationConfig as config } from '@constants/restaurants';
+import { menuValidationConfig as config } from '@constants/restaurants'
 
 export class Dish extends Model<
   InferAttributes<Dish>,
   InferCreationAttributes<Dish>
 > {
-  declare dishId: CreationOptional<number>;
-  declare dishName: string;
-  declare description: CreationOptional<string>;
+  declare dishId: CreationOptional<number>
+  declare dishName: string
+  declare description: CreationOptional<string>
 }
 
-export type dishModel = typeof Dish;
+export type dishModel = typeof Dish
 
 export function initDish(sequelize: Sequelize) {
   Dish.init(
@@ -53,7 +53,7 @@ export function initDish(sequelize: Sequelize) {
       sequelize,
       timestamps: true,
     }
-  );
+  )
 
-  return Dish;
+  return Dish
 }

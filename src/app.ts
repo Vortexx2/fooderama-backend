@@ -1,21 +1,15 @@
-import path from 'path'
 import 'dotenv/config'
-import favicon from 'serve-favicon'
 import config from 'config'
 
-import compression from 'compression'
 import helmet from 'helmet'
 import cors from 'cors'
-import express, { Request, Response, NextFunction } from 'express'
+import express, { Request, Response } from 'express'
 // import sequelize from 'sequelize';
 
-import logger from './logger'
 import router from '@routes/index'
 import { logCompleteInfo, logError, errorResponder } from '@middleware/logger'
 import { db, checkDBConnection, syncDB } from './db'
 // imports above
-
-require('dotenv').config()
 
 const app = express()
 
@@ -37,7 +31,7 @@ app.use(logCompleteInfo)
 app.use(logError)
 app.use(errorResponder)
 
-app.get('/', (req: Request, res: Response, next: NextFunction) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Hello World')
 })
 

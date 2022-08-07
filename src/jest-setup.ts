@@ -7,7 +7,9 @@ beforeAll(async () => {
     await db.sequelize.sync({
       force: true,
     })
-  } catch (error: any) {}
+  } catch (error: any) {
+    console.log(error)
+  }
 })
 
 afterAll(done => {
