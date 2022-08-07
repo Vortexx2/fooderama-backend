@@ -15,7 +15,7 @@ import { logCompleteInfo, logError, errorResponder } from '@middleware/logger'
 import { db, checkDBConnection, syncDB } from './db'
 // imports above
 
-require('dotenv').config()
+// require('dotenv').config()
 
 const app = express()
 
