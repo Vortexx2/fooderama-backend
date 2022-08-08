@@ -28,13 +28,14 @@ syncDB(db.sequelize, false, true)
 
 app.use(logCompleteInfo)
 
-app.use(logError)
-app.use(errorResponder)
-
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello World')
 })
 
 app.use('/api/v1', router)
+
+// error handling middleware - always at the end
+app.use(logError)
+app.use(errorResponder)
 
 export { app, config }

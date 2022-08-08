@@ -5,14 +5,14 @@ export interface BaseRestaurant {
   description?: string
   open?: boolean
   rating?: number
-  openingTime?: Date
-  closingTime?: Date
+  openingTime?: string
+  closingTime?: string
 }
 
 export interface FullRestaurant extends BaseRestaurant {
   restId: number
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }
 
 export type RestObjOrArr<T extends BaseRestaurant | BaseRestaurant[]> =

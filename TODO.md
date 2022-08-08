@@ -1,6 +1,6 @@
 # Todos:
 
-[ ] Use `zod` to validate all request bodies. Will help us to extract types as well.
+[x] Use `zod` to validate restaurant routes. Will help us to extract types as well.
 
 [ ] Understand how errors are being processed and formatted to understand if they have been standardised across the application.
 

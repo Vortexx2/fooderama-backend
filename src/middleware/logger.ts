@@ -1,7 +1,10 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from 'express'
 
 import logger from '../logger'
+import statusCodes from '@constants/status'
 import { CustomError } from '../errors'
+
+// Imports above
 
 export function logReqInfo(req: Request, res: Response, next: NextFunction) {
   logger.info(`${req.method} ${req.path}`)
@@ -36,7 +39,7 @@ export const logError: ErrorRequestHandler = (
   next
 ) => {
   logger.error(err.message)
-  next()
+  next(err)
 }
 
 /**
@@ -44,12 +47,30 @@ export const logError: ErrorRequestHandler = (
  * @param err Error of custom type (eventually will be implemented)
  * @param req Request
  * @param res Response
- * @param next Next
+ * @param _next Next
  */
 export const errorResponder: ErrorRequestHandler = (
-  err: CustomError,
+  err: Error,
   req,
-  res
+  res,
+  // _next has to be specified, otherwise express won't recognise it as a valid error middleware
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _next: NextFunction
 ) => {
-  res.status(err.code).json(err)
+  if (err instanceof CustomError) {
+    res.status(err.code).json(err)
+  } else {
+    const code = statusCodes['Internal Server Error']
+
+    const { message, name, ...rest } = err
+    const customErr = new CustomError(
+      message,
+      name,
+      code,
+      err.constructor.name,
+      rest
+    )
+
+    res.status(code).json(customErr)
+  }
 }

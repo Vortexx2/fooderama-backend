@@ -1,11 +1,19 @@
 import { Router } from 'express'
+import { ZodError } from 'zod'
 
 import * as restService from '@services/restaurants.service'
 import statusCodes from '@constants/status'
+
 import { validateIdParam } from '@middleware/routing'
-import { BaseRestaurant } from '@declarations/restaurants'
 import { Restaurant } from '@models/restaurants.model'
 import { assignPropsToObject } from '@utils/routes.util'
+import { zRestaurant, zRestaurantArray } from '@utils/zodSchemas/restSchema'
+
+import type {
+  zRestaurantType,
+  zRestaurantArrayType,
+} from '@utils/zodSchemas/restSchema'
+import { ValidationError } from 'errors'
 // Imports Above
 
 /**
@@ -50,45 +58,57 @@ restRouter.get('/:id', validateIdParam, async (req, res, next) => {
 
 // the POST route, extracts all the registered props on the model from the body, and then performs the create query on the DB
 restRouter.post('/', async (req, res, next) => {
-  let creationObject: BaseRestaurant[] | BaseRestaurant
+  const body: unknown = req.body
 
   try {
-    const { body } = req
+    let creation: zRestaurantType | zRestaurantArrayType
 
-    // incoming req body is an Array
+    // check if body is array of restaurant objects to be created
     if (Array.isArray(body)) {
-      const restArr: BaseRestaurant[] = []
-      body.map((indRest: { [key: string]: any }) => {
-        restArr.push(assignPropsToObject(props, indRest) as BaseRestaurant)
-      })
-
-      creationObject = restArr
-    }
-    // incoming req body is an Object
-    else {
-      creationObject = assignPropsToObject(props, body) as BaseRestaurant
+      creation = zRestaurantArray.parse(body)
+    } else {
+      creation = zRestaurant.parse(body)
     }
 
-    const result = await restService.create(creationObject)
+    const result = await restService.create(creation)
 
     res.status(statusCodes.OK).json(result)
-  } catch (error: any) {
-    // TODO: Check fix for unique constraint error going to frontend
-    next(error)
+  } catch (error: unknown) {
+    if (error instanceof ZodError) {
+      next(
+        new ValidationError(
+          'Validation error during restaurant creation',
+          error.flatten()
+        )
+      )
+    } else {
+      next(error)
+    }
   }
 })
 
 // the UPDATE route, checks if provided `id` is of a valid format and then extracts only the registered properties from the request body and then calls the `update` sequelize method
 restRouter.put('/:id', validateIdParam, async (req, res, next) => {
   try {
+    // convert id to number
     const id = parseInt(req.params.id, 10)
-    const { body } = req
 
-    const rest = assignPropsToObject(props, body)
+    const body: unknown = req.body
+
+    // parse body through a partial of the `zRestaurant` schema
+    const rest = zRestaurant.partial().parse(body)
 
     const result = await restService.update(id, rest)
     res.status(statusCodes.OK).json(result)
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof ZodError) {
+      next(
+        new ValidationError(
+          'Validation error during restaurant updation',
+          error.flatten()
+        )
+      )
+    }
     next(error)
   }
 })

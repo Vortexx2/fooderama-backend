@@ -69,6 +69,13 @@ export class CustomError extends Error {
   }
 }
 
+// 400 - Bad Request (Validation Error)
+export class ValidationError extends CustomError {
+  constructor(message?: ErrorMessage, data?: any) {
+    super(message, 'ValidationError', 400, 'validation-error', data)
+  }
+}
+
 // 400 - Bad Request
 export class BadRequest extends CustomError {
   constructor(message?: ErrorMessage, data?: any) {

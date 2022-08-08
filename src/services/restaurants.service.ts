@@ -1,10 +1,17 @@
 import { db } from '../db'
 import { Restaurant } from '@models/restaurants.model'
-import { BaseRestaurant, RestObjOrArr } from '@declarations/restaurants'
 import { NotFound } from '../errors'
+
+import type {
+  zRestaurantType,
+  zRestaurantArrayType,
+} from '@utils/zodSchemas/restSchema'
 // Imports Above
 
 const { models } = db
+
+type RestObjOrArr<T extends zRestaurantType | zRestaurantArrayType> =
+  T extends zRestaurantType ? Restaurant : Restaurant[]
 
 // TODO: Check how to implement pagination if there are a lot of entries
 // `findAndCountAll` might be a fix
@@ -31,7 +38,7 @@ export const find = async (id: number) => {
  * @param rest the object or array that is supposed to be entried into the database. Can be both an array of restaurants or a singular restaurant.
  * @returns A promise to the created Restaurant(s)
  */
-export const create = async <T extends BaseRestaurant | BaseRestaurant[]>(
+export const create = async <T extends zRestaurantType | zRestaurantArrayType>(
   rest: T
 ): Promise<RestObjOrArr<T>> => {
   // check if the argument is an array
@@ -54,7 +61,7 @@ export const create = async <T extends BaseRestaurant | BaseRestaurant[]>(
  * @param id id of the record you wanna update
  * @param payload object that has the fields that it wants to update of the selected record
  */
-export const update = async (id: number, payload: Partial<BaseRestaurant>) => {
+export const update = async (id: number, payload: Partial<zRestaurantType>) => {
   const rest = await Restaurant.findByPk(id)
 
   if (!rest) {
