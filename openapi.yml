@@ -1,0 +1,190 @@
+openapi: 3.0.1
+
+info:
+  title: Fooderama API
+  description: Fooderama API specification
+  version: 1.0.0
+
+servers:
+  - url: api/v1
+
+# ALL API ENDPOINTS ARE DEFINED BELOW
+paths:
+  /restaurants:
+    get:
+      tags:
+        - Restaurants
+
+      summary: Get all restaurants registered in the DB
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantsArrayResponse'
+
+        500:
+          description: INTERNAL SERVER ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+    post:
+      tags:
+        - Restaurants
+
+      summary: Register a new restaurant to the DB.
+      description: Register a new restaurant. Auth will be required to check if user is an admin.
+
+      requestBody:
+        description: Restaurant that you want to create
+
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreationRestaurant'
+                - $ref: '#/components/schemas/CreationRestaurantArray'
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantResponse'
+
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+        500:
+          description: INTERNAL SERVER ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+  /restaurants/{id}:
+    put:
+      tags:
+        - Restaurants
+
+      summary: Update a restaurant
+      description: Update a restaurant that has already been registered. Auth will be required.
+
+      parameters:
+        - name: id
+          in: path
+          description: id of the restaurant that you want to update
+          required: true
+          schema:
+            type: integer
+
+      requestBody:
+        description: Restaurant that you want to create
+
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreationRestaurant'
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantResponse'
+
+        400:
+          description: BAD REQUEST. Most commonly occurs if restaurant with id does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+        500:
+          description: INTERNAL SERVER ERROR
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneralError'
+
+# ALL COMPONENTS ARE DEFINED BELOW
+components:
+  schemas:
+    CreationRestaurant:
+      type: object
+
+      required:
+        - restName
+        - restImage
+        - description
+
+      properties:
+        restName:
+          type: string
+        restImage:
+          type: string
+        description:
+          type: string
+        open:
+          type: boolean
+        rating:
+          type: number
+        openingTime:
+          type: string
+        closingTime:
+          type: string
+
+    CreationRestaurantArray:
+      type: array
+
+      items:
+        $ref: '#/components/schemas/CreationRestaurant'
+
+    RestaurantResponse:
+      allOf:
+        - $ref: '#/components/schemas/CreationRestaurant'
+        - type: object
+          properties:
+            restId:
+              type: integer
+            createdAt:
+              type: string
+            updatedAt:
+              type: string
+
+    RestaurantsArrayResponse:
+      type: array
+
+      items:
+        $ref: '#/components/schemas/RestaurantResponse'
+
+    GeneralError:
+      type: object
+
+      required:
+        - name
+        - message
+        - code
+        - className
+
+      properties:
+        name:
+          type: string
+        message:
+          type: string
+        code:
+          type: integer
+        className:
+          type: string
+        data:
+          type: object
