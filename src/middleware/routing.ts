@@ -2,25 +2,23 @@ import { Request, Response, NextFunction } from 'express'
 import { BadRequest } from '../errors'
 
 /**
- * Validate the id parameter in the request and throws a `BadRequest` if it is not in a valid ID format.
- * @param req
- * @param res
- * @param next
+ * Validates if all numerical parameters that are in the path are valid numerical values.
+ * @param ids the ids that you want to check from the path to be valid numbers
+ * @returns
  */
-export function validateIdParam(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
-  try {
-    const id = parseInt(req.params.id, 10)
+export function checkNumericalParams(...ids: string[]) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      ids.forEach(id => {
+        const numericalId = parseInt(req.params[id], 10)
 
-    if (isNaN(id)) {
-      throw new BadRequest('Bad Parameter')
+        if (isNaN(numericalId))
+          throw new BadRequest(`Bad parameter in path: ${id}`)
+
+        next()
+      })
+    } catch (error: any) {
+      next(error)
     }
-
-    next()
-  } catch (error: any) {
-    next(error)
   }
 }

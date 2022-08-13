@@ -3,9 +3,10 @@ import config from 'config'
 
 import logger from './logger'
 import { initRestaurant } from '@models/restaurants.model'
-import { initMenu } from '@models/menus.model'
 import { initCategory } from '@models/categories.model'
 import { initDish } from '@models/dishes.model'
+import { initCuisine } from '@models/cuisines.model'
+import { initRestaurantCuisine } from '@models/restaurant-cuisines.model'
 
 interface DatabaseConfig {
   host: string
@@ -66,23 +67,25 @@ const sequelize = new Sequelize(dbName, username, password, {
 
 // give the sequelize instance control of all of the models
 const Restaurant = initRestaurant(sequelize)
-const Menu = initMenu(sequelize)
 const Category = initCategory(sequelize)
 const Dish = initDish(sequelize)
+const Cuisine = initCuisine(sequelize)
+const RestaurantCuisine = initRestaurantCuisine(sequelize)
 
 // associations
 
-Menu.hasMany(Category, {
-  foreignKey: {
-    name: 'menuId',
-    allowNull: false,
-  },
-  onDelete: 'SET NULL',
-  onUpdate: 'CASCADE',
+// Restaurants m : n Cuisines
+Restaurant.Cuisines = Restaurant.belongsToMany(Cuisine, {
+  through: RestaurantCuisine,
+  foreignKey: 'restId',
 })
-Category.belongsTo(Menu)
+Cuisine.Restaurants = Cuisine.belongsToMany(Restaurant, {
+  through: RestaurantCuisine,
+  foreignKey: 'cuisineId',
+})
 
-Restaurant.hasOne(Menu, {
+// Restaurants 1 : m Categories
+Restaurant.hasMany(Category, {
   foreignKey: {
     name: 'restId',
     allowNull: false,
@@ -90,8 +93,9 @@ Restaurant.hasOne(Menu, {
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
 })
-Menu.belongsTo(Restaurant)
+Category.belongsTo(Restaurant)
 
+// Categories 1 : m Dishes
 Category.hasMany(Dish, {
   foreignKey: {
     name: 'categoryId',
@@ -100,16 +104,17 @@ Category.hasMany(Dish, {
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
 })
-Dish.hasOne(Category)
+Dish.belongsTo(Category)
 
 /**
  * The object where all of the intialised models are stored for later reference.
  */
 const models = {
   Restaurant,
-  Menu,
   Category,
   Dish,
+  Cuisine,
+  RestaurantCuisine,
 }
 
 /**

@@ -5,6 +5,7 @@ interface RestaurantValidationConfig {
   readonly MAX_DESC_LEN: number
   readonly MIN_RATING: number
   readonly MAX_RATING: number
+  readonly MAX_CUISINES_CREATION: number
 }
 
 export const restValidationConfig: RestaurantValidationConfig = {
@@ -14,6 +15,17 @@ export const restValidationConfig: RestaurantValidationConfig = {
   MAX_DESC_LEN: 256,
   MIN_RATING: 0,
   MAX_RATING: 5,
+  MAX_CUISINES_CREATION: 5,
+}
+
+interface CuisineValidationConfig {
+  readonly MIN_CUISINE_LEN: number
+  readonly MAX_CUISINE_LEN: number
+}
+
+export const cuisineValidationConfig: CuisineValidationConfig = {
+  MIN_CUISINE_LEN: 4,
+  MAX_CUISINE_LEN: 16,
 }
 
 interface MenuValidationConfig {

@@ -7,7 +7,12 @@ import express, { Request, Response } from 'express'
 // import sequelize from 'sequelize';
 
 import router from '@routes/index'
-import { logCompleteInfo, logError, errorResponder } from '@middleware/logger'
+import {
+  logCompleteInfo,
+  logError,
+  errorResponder,
+  notFoundHandler,
+} from '@middleware/logger'
 import { db, checkDBConnection, syncDB } from './db'
 // imports above
 
@@ -37,5 +42,6 @@ app.use('/api/v1', router)
 // error handling middleware - always at the end
 app.use(logError)
 app.use(errorResponder)
+app.use(notFoundHandler)
 
 export { app, config }

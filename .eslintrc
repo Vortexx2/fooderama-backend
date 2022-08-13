@@ -10,7 +10,7 @@
   "rules": {
     // to enable additional rules
     "semi": ["error", "never"],
-    "quotes": ["error", "single"],
+    "quotes": ["error", "single", { "avoidEscape": true }],
     "linebreak-style": ["error", "unix"],
     "indent": ["error", 2, { "VariableDeclarator": "first" }],
 

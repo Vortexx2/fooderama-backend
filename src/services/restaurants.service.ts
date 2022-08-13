@@ -21,7 +21,7 @@ type RestObjOrArr<T extends zRestaurantType | zRestaurantArrayType> =
  * @returns A promise to the array of all the `Restaurant`s in the database.
  */
 export const findAll = async () => {
-  return models.Restaurant.findAll()
+  return models.Restaurant.findAll({ include: Restaurant.Cuisines })
 }
 
 /**

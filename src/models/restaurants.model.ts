@@ -26,6 +26,7 @@ export class Restaurant extends Model<
   declare rating: CreationOptional<number>
   declare openingTime: CreationOptional<string>
   declare closingTime: CreationOptional<string>
+  static Cuisines: any
 }
 
 export type restModel = typeof Restaurant

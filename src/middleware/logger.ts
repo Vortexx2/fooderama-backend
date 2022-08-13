@@ -2,7 +2,7 @@ import { ErrorRequestHandler, Request, Response, NextFunction } from 'express'
 
 import logger from '../logger'
 import statusCodes from '@constants/status'
-import { CustomError } from '../errors'
+import { CustomError, NotFound } from '../errors'
 
 // Imports above
 
@@ -73,4 +73,14 @@ export const errorResponder: ErrorRequestHandler = (
 
     res.status(code).json(customErr)
   }
+}
+
+/**
+ * Handler to take care of any requests that occur for routes that are not registered.
+ * @param req express Request object
+ * @param res express Response object
+ */
+export const notFoundHandler = (req: Request, res: Response) => {
+  const notFoundErr = new NotFound("Requested resource can't be found")
+  res.status(statusCodes['Not Found']).json(notFoundErr)
 }
