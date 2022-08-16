@@ -15,6 +15,40 @@ paths:
       tags:
         - Restaurants
 
+      parameters:
+        - name: cuisines
+          in: query
+          description: If you want to include the cuisines in the fetched restaurants (default is false)
+          required: false
+          schema:
+            type: boolean
+            enum: [true, false]
+            default: false
+
+        - name: orderby
+          in: query
+          description: The field that you want to order the fetched results by. If sort is not mentioned, they will be ordered in ASC order
+          required: false
+          schema:
+            type: string
+            enum: ['restId', 'restName']
+
+        - name: sort
+          in: query
+          description: If you want to order the fetched restaurants in ascending or descending order depending on the orderby query param. Has no effect if the orderby query param is not mentioned.
+          required: false
+          schema:
+            type: string
+            enum: ['asc', 'desc']
+
+        - name: open
+          in: query
+          description: Filter the returned restaurants depending on if the restaurant has an open status or not. By default, it includes all of the restaurants regardless.
+          required: false
+          schema:
+            type: boolean
+            enum: [true, false]
+
       summary: Get all restaurants registered in the DB
 
       responses:
@@ -46,8 +80,8 @@ paths:
           application/json:
             schema:
               oneOf:
-                - $ref: '#/components/schemas/CreationRestaurant'
-                - $ref: '#/components/schemas/CreationRestaurantArray'
+                - $ref: '#/components/schemas/BaseRestaurant'
+                - $ref: '#/components/schemas/BaseRestaurantArray'
 
       responses:
         200:
@@ -93,7 +127,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreationRestaurant'
+              $ref: '#/components/schemas/BaseRestaurant'
 
       responses:
         200:
@@ -120,7 +154,38 @@ paths:
 # ALL COMPONENTS ARE DEFINED BELOW
 components:
   schemas:
-    CreationRestaurant:
+    BaseCuisine:
+      type: object
+
+      required:
+        - cuisineName
+
+      properties:
+        cuisineName:
+          type: string
+
+    CuisineResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseCuisine'
+
+        - type: object
+
+          required:
+            - restId
+            - createdAt
+            - updatedAt
+
+          properties:
+            restId:
+              type: integer
+
+            createdAt:
+              type: string
+
+            updatedAt:
+              type: string
+
+    BaseRestaurant:
       type: object
 
       required:
@@ -144,16 +209,27 @@ components:
         closingTime:
           type: string
 
-    CreationRestaurantArray:
+        Cuisines:
+          type: array
+          items:
+            $ref: '#/components/schemas/BaseCuisine'
+
+    BaseRestaurantArray:
       type: array
 
       items:
-        $ref: '#/components/schemas/CreationRestaurant'
+        $ref: '#/components/schemas/BaseRestaurant'
 
     RestaurantResponse:
       allOf:
-        - $ref: '#/components/schemas/CreationRestaurant'
+        - $ref: '#/components/schemas/BaseRestaurant'
         - type: object
+
+          required:
+            - restId
+            - createdAt
+            - updatedAt
+
           properties:
             restId:
               type: integer
