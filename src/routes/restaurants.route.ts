@@ -1,5 +1,10 @@
 import { Router } from 'express'
-import { ZodError } from 'zod'
+import {
+  InferAttributes,
+  FindOptions,
+  NonNullFindOptions,
+} from 'sequelize/types'
+import { z, ZodError } from 'zod'
 
 import * as restService from '@services/restaurants.service'
 import * as cuisineService from '@services/cuisines.service'
@@ -15,10 +20,6 @@ import {
   zCuisinesArray,
 } from '@utils/zodSchemas/restSchema'
 
-// import type {
-//   zRestaurantType,
-//   zRestaurantArrayType,
-// } from '@utils/zodSchemas/restSchema'
 import { ValidationError } from 'errors'
 // Imports Above
 
@@ -43,10 +44,61 @@ const props = [
 // the GET all route, does not perform any operations on the queried data from the DB
 restRouter.get('/', async (req, res, next) => {
   try {
-    const result = await restService.findAll()
-    res.status(statusCodes.OK).json(result)
+    const { cuisines, orderby, sort, open } = req.query
+
+    const queryOptions: FindOptions<
+      InferAttributes<Restaurant, { omit: never }>
+    > = {}
+
+    // if cuisines exists and is true
+    if (cuisines === 'true') {
+      queryOptions.include = {
+        model: db.models.Cuisine,
+        through: {
+          attributes: [],
+        },
+      }
+    }
+
+    const ORDERBY_OPTIONS = z.enum(['restId', 'restName'])
+    const parsedOrder = ORDERBY_OPTIONS.safeParse(orderby)
+    const parsedSort = z.enum(['asc', 'desc']).safeParse(sort)
+
+    // check if there is an order query param and validate
+    if (parsedOrder.success) {
+      // then check if there is a sort query param and validate
+      if (parsedSort.success) {
+        queryOptions.order = [[parsedOrder.data, parsedSort.data.toUpperCase()]]
+      }
+      // if there is no valid sort value
+      else {
+        queryOptions.order = [[parsedOrder.data, 'ASC']]
+      }
+    }
+
+    if (open === 'true' || open === 'false') {
+      // filters the restaurants which are open or not depending on the open query param
+      queryOptions.where = {
+        open,
+      }
+    }
+
+    const restaurants = await restService.findAll(queryOptions)
+
+    // if cuisines does not exist or is false, or has an invalid value
+    res.status(statusCodes.OK).json(restaurants)
   } catch (error: any) {
-    next(error)
+    // if there is any error in validation of query parameters
+    if (error instanceof ZodError) {
+      next(
+        new ValidationError(
+          'Validation error in query parameters during restaurants fetch',
+          error.flatten()
+        )
+      )
+    } else {
+      next(error)
+    }
   }
 })
 
@@ -55,8 +107,25 @@ restRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10)
 
-    const result = await restService.find(id)
-    res.status(statusCodes.OK).json(result)
+    const { cuisines } = req.query
+
+    const queryOptions: Omit<
+      NonNullFindOptions<InferAttributes<Restaurant, { omit: never }>>,
+      'where'
+    > = { rejectOnEmpty: false }
+
+    // if cuisines exists and is true
+    if (cuisines === 'true') {
+      queryOptions.include = {
+        model: db.models.Cuisine,
+        through: {
+          attributes: [],
+        },
+      }
+    }
+
+    const restaurant = await restService.find(id, queryOptions)
+    res.status(statusCodes.OK).json(restaurant)
   } catch (error: any) {
     next(error)
   }
@@ -99,10 +168,10 @@ restRouter.post('/', async (req, res, next) => {
         cuisines = zCuisinesArray.parse(cuisines)
 
         // first check if all of the ids are valid
+
+        /** Array of `cuisineId`s */
         const cuisineIds: number[] = cuisines.map(
-          (obj: { cuisineId: number }) => {
-            return obj.cuisineId
-          }
+          (obj: { cuisineId: number }) => obj.cuisineId
         )
 
         // find all instances with the cuisineIds provided above
@@ -120,16 +189,25 @@ restRouter.post('/', async (req, res, next) => {
           )
         }
 
-        foundCuisines.forEach(cuisine => {
-          db.models.RestaurantCuisine.create({
+        // the array of associations that we have to create
+        const creationAssociations = foundCuisines.map(cuisine => {
+          return {
             restId: createdRestaurant.restId,
             cuisineId: cuisine.cuisineId,
-          })
+          }
+        })
+        await db.models.RestaurantCuisine.bulkCreate(creationAssociations, {
+          validate: true,
         })
 
-        // TODO: this does not include the 'Cuisines'
+        // reload the newly created restaurant including the cuisines
         createdRestaurant = await createdRestaurant.reload({
-          include: db.models.Restaurant.Cuisines,
+          include: {
+            model: db.models.Cuisine,
+            through: {
+              attributes: [],
+            },
+          },
         })
 
         res.status(statusCodes.OK).json(createdRestaurant)

@@ -6,6 +6,7 @@ import type {
   zRestaurantType,
   zRestaurantArrayType,
 } from '@utils/zodSchemas/restSchema'
+import { FindOptions, InferAttributes, NonNullFindOptions } from 'sequelize'
 // Imports Above
 
 const { models } = db
@@ -20,8 +21,10 @@ type RestObjOrArr<T extends zRestaurantType | zRestaurantArrayType> =
  *
  * @returns A promise to the array of all the `Restaurant`s in the database.
  */
-export const findAll = async () => {
-  return models.Restaurant.findAll({ include: Restaurant.Cuisines })
+export const findAll = async (
+  options?: FindOptions<InferAttributes<Restaurant, { omit: never }>>
+) => {
+  return models.Restaurant.findAll(options)
 }
 
 /**
@@ -29,8 +32,14 @@ export const findAll = async () => {
  * @param id the id by which to search the `Restaurant` for in the DB.
  * @returns A promise to the Restaurant object that is stored in the DB or `null` if it does not exist.
  */
-export const find = async (id: number) => {
-  return models.Restaurant.findByPk(id)
+export const find = async (
+  id: number,
+  options?: Omit<
+    NonNullFindOptions<InferAttributes<Restaurant, { omit: never }>>,
+    'where'
+  >
+) => {
+  return models.Restaurant.findByPk(id, options)
 }
 
 /**

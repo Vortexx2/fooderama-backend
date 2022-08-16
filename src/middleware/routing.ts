@@ -4,7 +4,7 @@ import { BadRequest } from '../errors'
 /**
  * Validates if all numerical parameters that are in the path are valid numerical values.
  * @param ids the ids that you want to check from the path to be valid numbers
- * @returns
+ * @returns nothing
  */
 export function checkNumericalParams(...ids: string[]) {
   return (req: Request, res: Response, next: NextFunction) => {
