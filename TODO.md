@@ -9,7 +9,7 @@
   - [x] GET `/restaurants` has an option to include its respective Cuisine association.
   - [x] POST & PUT `/restaurants` has a way to add already registered Cuisines to the restaurant. Since during creation we can't guarantee that what is passed in `Cuisines` array are all existing records and not new ones. If a cuisine like `{ cuisineName }` is passed, sequelize creates a new record.
 
-[] Fix typescript support for associations by declaring associations in the models.
+[x] Fix typescript support for associations by declaring associations in the models.
 
 [] Write E2E testing, for running them before each commit.
 

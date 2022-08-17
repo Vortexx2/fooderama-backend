@@ -15,4 +15,6 @@ module.exports = {
   },
   defaultRestaurantImage:
     'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&w=1000&q=80',
+  corsSettings: {},
+  helmetSettings: { contentSecurityPolicy: false },
 }
