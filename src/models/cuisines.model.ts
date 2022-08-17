@@ -5,18 +5,27 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  NonAttribute,
+  Association,
 } from 'sequelize'
 
 import { cuisineValidationConfig as config } from '@constants/restaurants'
+import { Restaurant } from './restaurants.model'
 // Imports above
 
 export class Cuisine extends Model<
-  InferAttributes<Cuisine>,
-  InferCreationAttributes<Cuisine>
+  InferAttributes<Cuisine, { omit: 'Restaurants' }>,
+  InferCreationAttributes<Cuisine, { omit: 'Restaurants' }>
 > {
   declare cuisineId: CreationOptional<number>
   declare cuisineName: string
-  static Restaurants: any
+
+  // Cuisine belongsToMany Restaurants
+  declare Restaurants?: NonAttribute<Restaurant>
+
+  declare static associations: {
+    Restaurants: Association<Cuisine, Restaurant>
+  }
 }
 
 export function initCuisine(sequelize: Sequelize) {

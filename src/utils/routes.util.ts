@@ -16,3 +16,9 @@ export function assignPropsToObject(
 
   return resObject
 }
+
+export function checkIfObject(payload: unknown) {
+  return (
+    typeof payload === 'object' && !Array.isArray(payload) && payload != null
+  )
+}

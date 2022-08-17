@@ -32,7 +32,6 @@ export const zRestaurant = z.object({
 export const zCuisinesArray = z
   .array(z.object({ cuisineId: z.number().int().nonnegative() }).strict())
   .max(MAX_CUISINES_CREATION)
-  .optional()
 
 /**
  * The zod Restaurant array schema.

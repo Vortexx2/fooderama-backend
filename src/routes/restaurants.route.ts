@@ -19,8 +19,9 @@ import {
   zRestaurantArray,
   zCuisinesArray,
 } from '@utils/zodSchemas/restSchema'
-
 import { ValidationError } from 'errors'
+
+import { JSONBody } from '@declarations/response'
 // Imports Above
 
 /**
@@ -131,8 +132,6 @@ restRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
   }
 })
 
-type JSONBody = { [key: string]: any } | { [key: string]: any }[]
-
 // the POST route, extracts all the registered props on the model from the body, and then performs the create query on the DB
 restRouter.post('/', async (req, res, next) => {
   const body: JSONBody = req.body
@@ -234,14 +233,82 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
   try {
     // convert id to number
     const id = parseInt(req.params.id, 10)
+    const body: JSONBody = req.body
 
-    const body: unknown = req.body
+    const { cuisines } = req.query
 
-    // parse body through a partial of the `zRestaurant` schema
-    const rest = zRestaurant.partial().parse(body)
+    let updatedRestaurant
 
-    const result = await restService.update(id, rest)
-    res.status(statusCodes.OK).json(result)
+    // if the route had ?cuisines=true query param
+    if (cuisines === 'true') {
+      const parsedRestaurant = zRestaurant
+        .partial()
+        .extend({ Cuisines: zCuisinesArray })
+        .parse(body)
+
+      updatedRestaurant = await restService.update(id, parsedRestaurant)
+
+      /** Array of `cuisineId`s */
+      const cuisineIds: number[] = parsedRestaurant.Cuisines.map(
+        cuisine => cuisine.cuisineId
+      )
+
+      /** Find all cuisines that have cuisine in `cuisineIds` */
+      const foundCuisines = await cuisineService.findAll({
+        where: {
+          cuisineId: cuisineIds,
+        },
+      })
+
+      // if all of the provided Cuisines are not in the database throw a validation error
+      if (foundCuisines.length !== cuisineIds.length) {
+        throw new ValidationError(
+          'All of the provided Cuisines do not exist in the database'
+        )
+      }
+
+      // first delete all of the records that had restId
+      await db.models.RestaurantCuisine.destroy({
+        where: {
+          restId: id,
+        },
+      })
+
+      /** the records that we need to bulk create in the `RestaurantCuisine` model */
+      const creationRestaurantCuisines = parsedRestaurant.Cuisines.map(
+        cuisine => {
+          return {
+            restId: id,
+            cuisineId: cuisine.cuisineId,
+          }
+        }
+      )
+      // create all of the associations that we want to
+      await db.models.RestaurantCuisine.bulkCreate(creationRestaurantCuisines, {
+        validate: true,
+      })
+
+      // reload the currently created restaurant with `Cuisines`
+      await updatedRestaurant.reload({
+        include: {
+          model: db.models.Cuisine,
+          through: {
+            attributes: [],
+          },
+        },
+      })
+    }
+
+    // if the route had no ?cuisines=true query param
+    else {
+      // parse body through a partial of the `zRestaurant` schema
+      const rest = zRestaurant.partial().parse(body)
+
+      // this won't have `Cuisines` included
+      updatedRestaurant = await restService.update(id, rest)
+    }
+
+    res.status(statusCodes.OK).json(updatedRestaurant)
   } catch (error: unknown) {
     if (error instanceof ZodError) {
       next(
@@ -266,7 +333,9 @@ restRouter.delete(
 
       where['restId'] = id
 
-      const deletedRows = await restService.del(where)
+      const deletedRows = await restService.del({
+        where,
+      })
       res.status(statusCodes.OK).json({ deletedRows })
     } catch (error: any) {
       next(error)
@@ -282,7 +351,9 @@ restRouter.delete('/', async (req, res, next) => {
     whereProps.push('id', 'createdAt', 'updatedAt')
     const where: Partial<Restaurant> = assignPropsToObject(whereProps, body)
 
-    const deletedRows = await restService.del(where)
+    const deletedRows = await restService.del({
+      where,
+    })
     res.status(statusCodes.OK).json({ deletedRows })
   } catch (error: any) {
     next(error)

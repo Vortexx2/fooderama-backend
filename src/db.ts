@@ -75,11 +75,11 @@ const RestaurantCuisine = initRestaurantCuisine(sequelize)
 // associations
 
 // Restaurants m : n Cuisines
-Restaurant.Cuisines = Restaurant.belongsToMany(Cuisine, {
+Restaurant.associations.Cuisines = Restaurant.belongsToMany(Cuisine, {
   through: RestaurantCuisine,
   foreignKey: 'restId',
 })
-Cuisine.Restaurants = Cuisine.belongsToMany(Restaurant, {
+Cuisine.associations.Restaurants = Cuisine.belongsToMany(Restaurant, {
   through: RestaurantCuisine,
   foreignKey: 'cuisineId',
 })

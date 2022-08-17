@@ -6,7 +6,13 @@ import type {
   zRestaurantType,
   zRestaurantArrayType,
 } from '@utils/zodSchemas/restSchema'
-import { FindOptions, InferAttributes, NonNullFindOptions } from 'sequelize'
+import {
+  Filterable,
+  FindOptions,
+  InferAttributes,
+  InstanceUpdateOptions,
+  NonNullFindOptions,
+} from 'sequelize'
 // Imports Above
 
 const { models } = db
@@ -70,7 +76,11 @@ export const create = async <T extends zRestaurantType | zRestaurantArrayType>(
  * @param id id of the record you wanna update
  * @param payload object that has the fields that it wants to update of the selected record
  */
-export const update = async (id: number, payload: Partial<zRestaurantType>) => {
+export const update = async (
+  id: number,
+  payload: Partial<zRestaurantType>,
+  options?: InstanceUpdateOptions<InferAttributes<Restaurant, { omit: never }>>
+) => {
   const rest = await Restaurant.findByPk(id)
 
   if (!rest) {
@@ -78,7 +88,7 @@ export const update = async (id: number, payload: Partial<zRestaurantType>) => {
     throw new NotFound(`Resource with id ${id} was not found`)
   }
 
-  const updatedRest = await rest.update(payload)
+  const updatedRest = await rest.update(payload, options)
   return updatedRest
 }
 
@@ -87,10 +97,8 @@ export const update = async (id: number, payload: Partial<zRestaurantType>) => {
  * @param whereObj this is the `where` parameter that will be passed into the `destroy` sequelize method (the `WHERE` that is written in SQL statements)
  * @returns A promise to the number of records destroyed
  */
-export const del = async (whereObj: Partial<Restaurant>) => {
-  return await Restaurant.destroy({
-    where: {
-      ...whereObj,
-    },
-  })
+export const del = async (
+  whereObj: Filterable<InferAttributes<Restaurant, { omit: never }>>
+) => {
+  return await Restaurant.destroy(whereObj)
 }

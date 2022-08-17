@@ -5,18 +5,21 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  Association,
+  NonAttribute,
 } from 'sequelize'
 
 import { restValidationConfig } from '@constants/restaurants'
 
 import config from 'config'
+import { Cuisine } from './cuisines.model'
 // Imports above
 
 const { MAX_DESC_LEN, MAX_REST_LEN } = restValidationConfig
 
 export class Restaurant extends Model<
-  InferAttributes<Restaurant>,
-  InferCreationAttributes<Restaurant>
+  InferAttributes<Restaurant, { omit: 'Cuisines' }>,
+  InferCreationAttributes<Restaurant, { omit: 'Cuisines' }>
 > {
   declare restId: CreationOptional<number>
   declare restName: string
@@ -26,7 +29,12 @@ export class Restaurant extends Model<
   declare rating: CreationOptional<number>
   declare openingTime: CreationOptional<string>
   declare closingTime: CreationOptional<string>
-  static Cuisines: any
+
+  declare Cuisines?: NonAttribute<Cuisine[]>
+
+  declare static associations: {
+    Cuisines: Association<Restaurant, Cuisine>
+  }
 }
 
 export type restModel = typeof Restaurant
