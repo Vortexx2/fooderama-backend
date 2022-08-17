@@ -5,17 +5,28 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  Association,
+  NonAttribute,
 } from 'sequelize'
 
 import { menuValidationConfig as config } from '@constants/restaurants'
+import { Category } from './categories.model'
+// Imports above
 
 export class Dish extends Model<
-  InferAttributes<Dish>,
-  InferCreationAttributes<Dish>
+  InferAttributes<Dish, { omit: 'Category' }>,
+  InferCreationAttributes<Dish, { omit: 'Category' }>
 > {
   declare dishId: CreationOptional<number>
   declare dishName: string
   declare description: CreationOptional<string>
+
+  declare Category?: NonAttribute<Category>
+
+  declare static associations: {
+    // Dish m : 1 Category
+    Category: Association<Dish, Category>
+  }
 }
 
 export type dishModel = typeof Dish

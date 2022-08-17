@@ -9,17 +9,18 @@ import {
   NonAttribute,
 } from 'sequelize'
 
-import { restValidationConfig } from '@constants/restaurants'
-
 import config from 'config'
+
 import { Cuisine } from './cuisines.model'
+import { Category } from './categories.model'
+import { restValidationConfig } from '@constants/restaurants'
 // Imports above
 
 const { MAX_DESC_LEN, MAX_REST_LEN } = restValidationConfig
 
 export class Restaurant extends Model<
-  InferAttributes<Restaurant, { omit: 'Cuisines' }>,
-  InferCreationAttributes<Restaurant, { omit: 'Cuisines' }>
+  InferAttributes<Restaurant, { omit: 'Cuisines' | 'Categories' }>,
+  InferCreationAttributes<Restaurant, { omit: 'Cuisines' | 'Categories' }>
 > {
   declare restId: CreationOptional<number>
   declare restName: string
@@ -31,9 +32,14 @@ export class Restaurant extends Model<
   declare closingTime: CreationOptional<string>
 
   declare Cuisines?: NonAttribute<Cuisine[]>
+  declare Categories?: NonAttribute<Category[]>
 
   declare static associations: {
+    // Restaurants m: n Cuisines
     Cuisines: Association<Restaurant, Cuisine>
+
+    // Restaurants 1: m Categories
+    Categories: Association<Restaurant, Category>
   }
 }
 

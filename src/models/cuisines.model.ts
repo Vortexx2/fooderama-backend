@@ -24,6 +24,7 @@ export class Cuisine extends Model<
   declare Restaurants?: NonAttribute<Restaurant>
 
   declare static associations: {
+    // Cuisines m : n Restaurants
     Restaurants: Association<Cuisine, Restaurant>
   }
 }

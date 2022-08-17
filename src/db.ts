@@ -85,7 +85,7 @@ Cuisine.associations.Restaurants = Cuisine.belongsToMany(Restaurant, {
 })
 
 // Restaurants 1 : m Categories
-Restaurant.hasMany(Category, {
+Restaurant.associations.Categories = Restaurant.hasMany(Category, {
   foreignKey: {
     name: 'restId',
     allowNull: false,
@@ -93,10 +93,10 @@ Restaurant.hasMany(Category, {
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
 })
-Category.belongsTo(Restaurant)
+Category.associations.Restaurant = Category.belongsTo(Restaurant)
 
 // Categories 1 : m Dishes
-Category.hasMany(Dish, {
+Category.associations.Dishes = Category.hasMany(Dish, {
   foreignKey: {
     name: 'categoryId',
     allowNull: false,
@@ -104,7 +104,7 @@ Category.hasMany(Dish, {
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
 })
-Dish.belongsTo(Category)
+Dish.associations.Category = Dish.belongsTo(Category)
 
 /**
  * The object where all of the intialised models are stored for later reference.

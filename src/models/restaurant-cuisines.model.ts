@@ -14,7 +14,7 @@ export class RestaurantCuisine extends Model<
   InferAttributes<RestaurantCuisine>,
   InferCreationAttributes<RestaurantCuisine>
 > {
-  // foreign keys don't normally need to be declared, but while writing where queries, these are needed for type annotations
+  // foreign keys don't normally need to be declared, but while writing queries with junction tables, these are needed for type annotations
   declare restId: ForeignKey<Restaurant['restId']>
   declare cuisineId: ForeignKey<Cuisine['cuisineId']>
 }

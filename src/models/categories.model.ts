@@ -5,8 +5,12 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
+  Association,
+  NonAttribute,
 } from 'sequelize'
+import { Dish } from './dishes.model'
 
+import { Restaurant } from './restaurants.model'
 // imports above
 
 // config for validation
@@ -18,12 +22,20 @@ const config = {
 }
 
 export class Category extends Model<
-  InferAttributes<Category>,
-  InferCreationAttributes<Category>
+  InferAttributes<Category, { omit: 'Restaurant' | 'Dishes' }>,
+  InferCreationAttributes<Category, { omit: 'Restaurant' | 'Dishes' }>
 > {
   declare categoryId: CreationOptional<number>
   declare categoryName: string
   declare description: CreationOptional<string>
+
+  declare Restaurant?: NonAttribute<Restaurant>
+  declare Dishes?: NonAttribute<Dish[]>
+
+  declare static associations: {
+    Restaurant: Association<Category, Restaurant>
+    Dishes: Association<Category, Dish>
+  }
 }
 
 export type categoryModel = typeof Category
