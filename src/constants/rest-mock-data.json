@@ -33,5 +33,20 @@
       "openingTime": "18:00",
       "closingTime": "02:00"
     }
+  ],
+  "multipleFailingRestaurants": [
+    {
+      "data": {
+        "restName": "A"
+      },
+      "error": 400
+    },
+    {
+      "data": {
+        "restName": "Crazy Chef",
+        "description": "Pizzas, rolls, burgers and sandwiches at an affordable price"
+      },
+      "error": 500
+    }
   ]
 }

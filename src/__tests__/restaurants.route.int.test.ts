@@ -19,10 +19,12 @@ afterAll(async () => {
   await db.sequelize.close()
 })
 
+const RESTAURANTS_ENDPOINT = '/api/v1/restaurants'
+
 describe('/restaurants', () => {
   test('GET on an empty DB', done => {
     request(server)
-      .get('/api/v1/restaurants')
+      .get(RESTAURANTS_ENDPOINT)
       .expect('Content-Type', /json/)
       .expect(200)
       .end((err, res) => {
@@ -35,7 +37,7 @@ describe('/restaurants', () => {
 
   test('POST a restaurant without any associations', done => {
     request(server)
-      .post('/api/v1/restaurants')
+      .post(RESTAURANTS_ENDPOINT)
       .send(mockData.basicRestaurant)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -50,7 +52,7 @@ describe('/restaurants', () => {
 
   test('POST array of restaurants', done => {
     request(server)
-      .post('/api/v1/restaurants')
+      .post(RESTAURANTS_ENDPOINT)
       .send(mockData.multipleBasicRestaurants)
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -63,5 +65,21 @@ describe('/restaurants', () => {
 
         return done()
       })
+  })
+
+  test('POST restaurants that should fail due to validation errors', done => {
+    for (const creationRestaurant of mockData.multipleFailingRestaurants) {
+      request(server)
+        .post(RESTAURANTS_ENDPOINT)
+        .send(creationRestaurant.data)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(creationRestaurant.error)
+        .end((err, res) => {
+          if (err) return done(err)
+
+          return done()
+        })
+    }
   })
 })
