@@ -20,6 +20,7 @@ afterAll(async () => {
 })
 
 const RESTAURANTS_ENDPOINT = '/api/v1/restaurants'
+const CUISINES_ENDPOINT = '/api/v1/cuisines'
 
 describe('/restaurants', () => {
   test('GET on an empty DB', done => {
@@ -78,6 +79,37 @@ describe('/restaurants', () => {
         .end((err, res) => {
           if (err) return done(err)
 
+          return done()
+        })
+    }
+  })
+
+  test("POST a restaurant with Cuisines which should fail since Cuisines don't exist yet", done => {
+    request(server)
+      .post(RESTAURANTS_ENDPOINT)
+      .send(mockData.restaurantWithCuisines)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .end((err, res) => {
+        if (err) return done(err)
+
+        return done()
+      })
+  })
+
+  test('POST multiple cuisines for future use', done => {
+    for (const creationCuisine of mockData.validCreationCuisines) {
+      request(server)
+        .post(CUISINES_ENDPOINT)
+        .send(creationCuisine)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          if (err) return done(err)
+
+          expect(res.body).toHaveProperty('cuisineId')
           return done()
         })
     }

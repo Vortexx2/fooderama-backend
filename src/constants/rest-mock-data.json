@@ -48,5 +48,21 @@
       },
       "error": 500
     }
+  ],
+  "restaurantWithCuisines": {
+    "restName": "Jungle Beats",
+    "description": "IDK tbh",
+    "Cuisines": [{ "cuisineId": 1 }]
+  },
+  "validCreationCuisines": [
+    {
+      "cuisineName": "Indian"
+    },
+    {
+      "cuisineName": "Italian"
+    },
+    {
+      "cuisineName": "Desserts"
+    }
   ]
 }
