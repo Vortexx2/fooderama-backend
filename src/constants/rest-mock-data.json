@@ -1,11 +1,11 @@
 {
-  "data": [
-    {
-      "restName": "Zaika",
-      "description": "An Indian Restaurant",
-      "openingTime": "12:00",
-      "closingTime": "02:00"
-    },
+  "basicRestaurant": {
+    "restName": "Zaika",
+    "description": "An Indian Restaurant",
+    "openingTime": "12:00",
+    "closingTime": "02:00"
+  },
+  "multipleBasicRestaurants": [
     {
       "restName": "Saras",
       "description": "Milkshakes and fruit juices, basically all of the beverages you can dream of",

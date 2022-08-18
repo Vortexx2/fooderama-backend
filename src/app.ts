@@ -2,7 +2,7 @@ import 'dotenv/config'
 
 import helmet from 'helmet'
 import cors from 'cors'
-import express, { Express, Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 
 import router from '@routes/index'
 import {
