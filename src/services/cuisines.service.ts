@@ -4,7 +4,7 @@ import { FindOptions, InferAttributes, InstanceUpdateOptions } from 'sequelize'
 import { Cuisine } from '@models/cuisines.model'
 
 import type { zCuisineType } from '@utils/zodSchemas/cuisineSchema'
-import { NotFound } from 'errors'
+import { NotFound } from '../errors'
 // Imports above
 
 const { models } = db

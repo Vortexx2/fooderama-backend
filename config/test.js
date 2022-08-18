@@ -12,5 +12,7 @@ module.exports = {
     dbName: 'fooderama-test',
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASS,
+    force: true,
+    alter: false,
   },
 }

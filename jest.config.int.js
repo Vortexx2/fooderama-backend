@@ -3,7 +3,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: 'src/',
-  setupFilesAfterEnv: ['<rootDir>/jest-setup.unit.ts'],
   moduleNameMapper: {
     '^@constants/(.*)$': '<rootDir>/constants/$1',
     '^@declarations/(.*)$': '<rootDir>/declarations/$1',
