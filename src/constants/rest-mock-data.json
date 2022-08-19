@@ -9,6 +9,7 @@
     {
       "restName": "Saras",
       "description": "Milkshakes and fruit juices, basically all of the beverages you can dream of",
+      "open": false,
       "openingTime": "10:00",
       "closingTime": "02:00"
     },
@@ -22,6 +23,7 @@
     {
       "restName": "Dialog Cafe",
       "description": "Delicious food in all cuisines",
+      "open": false,
       "rating": 3.9,
       "openingTime": "18:00",
       "closingTime": "02:00"
@@ -52,6 +54,7 @@
   "restaurantWithCuisines": {
     "restName": "Jungle Beats",
     "description": "IDK tbh",
+    "open": false,
     "Cuisines": [{ "cuisineId": 1 }]
   },
   "validCreationCuisines": [

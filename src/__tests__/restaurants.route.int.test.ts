@@ -6,7 +6,7 @@ import createApp from '../app'
 import { db } from '../db'
 
 import mockData from '@constants/rest-mock-data.json'
-import { endianness } from 'os'
+import { checkIfAscIds } from './utils'
 // Imports above
 
 let server: Express
@@ -116,6 +116,7 @@ describe('/restaurants', () => {
     }
   })
 
+  let restIdOfRestaurantWithCuisine: number
   test('POST a restaurant for which Cuisines now exist', done => {
     request(server)
       .post(RESTAURANTS_ENDPOINT)
@@ -127,6 +128,67 @@ describe('/restaurants', () => {
         if (err) return done(err)
 
         expect(res.body).toHaveProperty('restId')
+        expect(typeof res.body.restId).toBe('number')
+
+        restIdOfRestaurantWithCuisine = res.body.restId
+        return done()
+      })
+  })
+
+  test('GET /restaurants/:id with cuisines', done => {
+    request(server)
+      .get(
+        RESTAURANTS_ENDPOINT + `/${restIdOfRestaurantWithCuisine}?cuisines=true`
+      )
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err)
+
+        expect(res.body).toHaveProperty('restId')
+        expect(res.body.restId).toBe(restIdOfRestaurantWithCuisine)
+        expect(res.body).toHaveProperty('Cuisines')
+
+        return done()
+      })
+  })
+
+  test('GET /restaurants with sort', done => {
+    request(server)
+      .get(
+        RESTAURANTS_ENDPOINT +
+          '?cuisines=true&orderby=restId&sort=asc&open=true'
+      )
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err)
+
+        // check if what we have received is an array
+        expect(Array.isArray(res.body)).toBe(true)
+        const arrayOfRestaurants = res.body
+
+        // check if array of restaurants has Cuisines included and only the open ones are included
+        expect(
+          arrayOfRestaurants.reduce(
+            (isValidArray: boolean, currRest: Record<string, any>) => {
+              if (!isValidArray) return false
+
+              // Check if there is a `Cuisines` property on each restaurant
+              if (!Object.prototype.hasOwnProperty.call(currRest, 'Cuisines'))
+                return false
+
+              // Check if each restaurant is actually open
+              if (!currRest.open) return false
+
+              return true
+            },
+            true
+          )
+        ).toBe(true)
+
+        // check if ?sort=asc has worked or not
+        expect(checkIfAscIds(arrayOfRestaurants, 'restId')).toBe(true)
         return done()
       })
   })
