@@ -140,7 +140,6 @@ describe('/restaurants', () => {
       .get(
         RESTAURANTS_ENDPOINT + `/${restIdOfRestaurantWithCuisine}?cuisines=true`
       )
-
       .expect('Content-Type', /json/)
       .expect(200)
       .end((err, res) => {
@@ -189,6 +188,59 @@ describe('/restaurants', () => {
         ).toBe(true)
         // check if ?sort=asc has worked or not
         expect(checkIfAscIds(arrayOfRestaurants, 'restId')).toBe(true)
+        return done()
+      })
+  })
+
+  test('PUT /restaurants/:id', done => {
+    request(server)
+      .put(RESTAURANTS_ENDPOINT + `/${restIdOfRestaurantWithCuisine}`)
+      .send(mockData.updatedRestWithCuisines)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err)
+
+        expect(res.body).toHaveProperty('restId')
+
+        expect(res.body.restId).toBe(restIdOfRestaurantWithCuisine)
+
+        expect(res.body.restName).toBe(
+          mockData.updatedRestWithCuisines.restName
+        )
+        expect(res.body.open).toBe(mockData.updatedRestWithCuisines.open)
+
+        return done()
+      })
+  })
+
+  test('PUT /restaurant/:id with cuisines', done => {
+    request(server)
+      .put(
+        RESTAURANTS_ENDPOINT + `/${restIdOfRestaurantWithCuisine}?cuisines=true`
+      )
+      .send(mockData.updatedRestWithCuisines)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err)
+
+        expect(res.body).toHaveProperty('restId')
+
+        expect(res.body.restId).toBe(restIdOfRestaurantWithCuisine)
+
+        expect(res.body.restName).toBe(
+          mockData.updatedRestWithCuisines.restName
+        )
+        expect(res.body.open).toBe(mockData.updatedRestWithCuisines.open)
+
+        // checks if the registered Cuisines array has deleted the previous values and then associated with the newly mentioned cuisines
+        expect(res.body.Cuisines).toHaveLength(
+          mockData.updatedRestWithCuisines.Cuisines.length
+        )
+
         return done()
       })
   })

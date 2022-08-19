@@ -224,7 +224,6 @@ restRouter.post('/', async (req, res, next) => {
       }
     }
   } catch (error: unknown) {
-    
     await transaction.rollback()
     if (error instanceof ZodError) {
       next(
@@ -243,6 +242,8 @@ restRouter.post('/', async (req, res, next) => {
 
 // the UPDATE route, checks if provided `id` is of a valid format and then extracts only the registered properties from the request body and then calls the `update` sequelize method
 restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
+  const transaction = await db.sequelize.transaction()
+
   try {
     // convert id to number
     const id = parseInt(req.params.id, 10)
@@ -259,7 +260,9 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
         .extend({ Cuisines: zCuisinesArray })
         .parse(body)
 
-      updatedRestaurant = await restService.update(id, parsedRestaurant)
+      updatedRestaurant = await restService.update(id, parsedRestaurant, {
+        transaction,
+      })
 
       /** Array of `cuisineId`s */
       const cuisineIds: number[] = parsedRestaurant.Cuisines.map(
@@ -271,6 +274,7 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
         where: {
           cuisineId: cuisineIds,
         },
+        transaction,
       })
 
       // if all of the provided Cuisines are not in the database throw a validation error
@@ -285,6 +289,7 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
         where: {
           restId: id,
         },
+        transaction,
       })
 
       /** the records that we need to bulk create in the `RestaurantCuisine` model */
@@ -299,6 +304,7 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
       // create all of the associations that we want to
       await db.models.RestaurantCuisine.bulkCreate(creationRestaurantCuisines, {
         validate: true,
+        transaction,
       })
 
       // reload the currently created restaurant with `Cuisines`
@@ -309,6 +315,7 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
             attributes: [],
           },
         },
+        transaction,
       })
     }
 
@@ -321,8 +328,11 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
       updatedRestaurant = await restService.update(id, rest)
     }
 
+    await transaction.commit()
     res.status(statusCodes.OK).json(updatedRestaurant)
   } catch (error: unknown) {
+    await transaction.rollback()
+
     if (error instanceof ZodError) {
       next(
         new ValidationError(

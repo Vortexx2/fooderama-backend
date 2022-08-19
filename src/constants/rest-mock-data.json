@@ -57,6 +57,11 @@
     "open": false,
     "Cuisines": [{ "cuisineId": 1 }]
   },
+  "updatedRestWithCuisines": {
+    "restName": "Alpha Jungle Beats",
+    "open": true,
+    "Cuisines": [{ "cuisineId": 2 }, { "cuisineId": 3 }]
+  },
   "validCreationCuisines": [
     {
       "cuisineName": "Indian"
