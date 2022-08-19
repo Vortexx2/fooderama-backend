@@ -54,7 +54,8 @@ export const find = async (
  * @returns A promise to the created Restaurant(s)
  */
 export const create = async <T extends zRestaurantType | zRestaurantArrayType>(
-  rest: T
+  rest: T,
+  options?: any
 ): Promise<RestObjOrArr<T>> => {
   // check if the argument is an array
   if (Array.isArray(rest)) {
@@ -67,7 +68,7 @@ export const create = async <T extends zRestaurantType | zRestaurantArrayType>(
 
   // argument is an object
   else {
-    return models.Restaurant.create(rest) as Promise<RestObjOrArr<T>>
+    return models.Restaurant.create(rest, options) as Promise<RestObjOrArr<T>>
   }
 }
 

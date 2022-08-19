@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test:unit": "NODE_CONFIG_ENV=test && jest unit -c jest.config.js",
-    "test:int": "NODE_CONFIG_ENV=test && jest int -c jest.config.int.js" ,
+    "test:int": "NODE_CONFIG_ENV=test && jest int -c jest.config.int.js --forceExit",
     "dev": "NODE_CONFIG_ENV=development && ts-node-dev --no-notify ./src",
     "compile": "shx rm -rf ./lib/ && tsc",
     "start": "npm run compile && node lib/",

@@ -136,6 +136,8 @@ restRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
 restRouter.post('/', async (req, res, next) => {
   const body: JSONBody = req.body
 
+  const transaction = await db.sequelize.transaction()
+
   try {
     // check if body is array of restaurant objects to be created
     // do not allow associating with cuisines on bulk creation
@@ -157,10 +159,15 @@ restRouter.post('/', async (req, res, next) => {
       // the below parsing will fail if there are any extra fields on the Cuisines object or too many entries on the array
       const toBeRestaurant = zRestaurant.parse(body)
 
-      let createdRestaurant = await restService.create(toBeRestaurant)
+      let createdRestaurant = await restService.create(toBeRestaurant, {
+        transaction,
+      })
 
       // cuisines did not exist on the original body
-      if (!cuisines) res.status(statusCodes.OK).json(createdRestaurant)
+      if (!cuisines) {
+        await transaction.commit()
+        res.status(statusCodes.OK).json(createdRestaurant)
+      }
       // if cuisines exists
       else {
         // first parse cuisines
@@ -179,6 +186,7 @@ restRouter.post('/', async (req, res, next) => {
             cuisineId: cuisineIds,
           },
           include: db.models.Restaurant,
+          transaction,
         })
 
         // if all of the provided Cuisines are not in the database throw a validation error
@@ -197,6 +205,7 @@ restRouter.post('/', async (req, res, next) => {
         })
         await db.models.RestaurantCuisine.bulkCreate(creationAssociations, {
           validate: true,
+          transaction,
         })
 
         // reload the newly created restaurant including the cuisines
@@ -207,12 +216,16 @@ restRouter.post('/', async (req, res, next) => {
               attributes: [],
             },
           },
+          transaction,
         })
 
+        await transaction.commit()
         res.status(statusCodes.OK).json(createdRestaurant)
       }
     }
   } catch (error: unknown) {
+    
+    await transaction.rollback()
     if (error instanceof ZodError) {
       next(
         new ValidationError(

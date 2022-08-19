@@ -15,8 +15,9 @@ beforeAll(async () => {
   server = await createApp(config)
 })
 
-afterAll(async () => {
-  await db.sequelize.close()
+afterAll(done => {
+  db.sequelize.close()
+  done()
 })
 
 const RESTAURANTS_ENDPOINT = '/api/v1/restaurants'
@@ -113,5 +114,20 @@ describe('/restaurants', () => {
           return done()
         })
     }
+  })
+
+  test('POST a restaurant for which Cuisines now exist', done => {
+    request(server)
+      .post(RESTAURANTS_ENDPOINT)
+      .send(mockData.restaurantWithCuisines)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end((err, res) => {
+        if (err) return done(err)
+
+        expect(res.body).toHaveProperty('restId')
+        return done()
+      })
   })
 })
