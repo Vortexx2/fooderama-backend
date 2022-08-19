@@ -14,10 +14,10 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "src/*.{js,ts,json,yml}": [
+    "src/+(*.){js,ts,json,yml}": [
       "prettier --write"
     ],
-    "src/*.{js,ts}": [
+    "src/+(*.).{js,ts}": [
       "eslint"
     ]
   },

@@ -187,6 +187,23 @@ describe('/restaurants', () => {
           )
         ).toBe(true)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
         // check if ?sort=asc has worked or not
         expect(checkIfAscIds(arrayOfRestaurants, 'restId')).toBe(true)
         return done()
