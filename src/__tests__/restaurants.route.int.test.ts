@@ -140,6 +140,7 @@ describe('/restaurants', () => {
       .get(
         RESTAURANTS_ENDPOINT + `/${restIdOfRestaurantWithCuisine}?cuisines=true`
       )
+
       .expect('Content-Type', /json/)
       .expect(200)
       .end((err, res) => {
@@ -186,24 +187,6 @@ describe('/restaurants', () => {
             true
           )
         ).toBe(true)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         // check if ?sort=asc has worked or not
         expect(checkIfAscIds(arrayOfRestaurants, 'restId')).toBe(true)
         return done()
