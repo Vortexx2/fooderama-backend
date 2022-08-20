@@ -5,7 +5,7 @@ import config from 'config'
 import createApp from '../app'
 import { db } from '../db'
 
-import mockData from '@constants/rest-mock-data.json'
+import mockData from '@constants/test-rest-mock-data.json'
 import { checkIfAscIds } from './utils'
 // Imports above
 

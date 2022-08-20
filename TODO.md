@@ -11,7 +11,9 @@
 
 [x] Fix typescript support for associations by declaring associations in the models.
 
-[] Write E2E testing, for running them before each commit.
+[x] Write E2E testing, for running them before each commit.
+
+[] Add really good mock data for restaurants, for testing the frontend and for future use.
 
 [ ] Write an OpenAPI spec sheet for good documentation.
 
