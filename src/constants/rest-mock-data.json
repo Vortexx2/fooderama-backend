@@ -1,0 +1,49 @@
+{
+  "restaurants": [
+    {
+      "restName": "Zaika",
+      "description": "Delectable Indian dishes at an affordable price",
+      "open": false,
+      "Cuisines": [{ "cuisineId": 1 }]
+    },
+    {
+      "restName": "Crazy Chef",
+      "description": "Burgers, wraps and sandwiches",
+      "open": false,
+      "Cuisines": [{ "cuisineId": 3 }, { "cuisineId": 4 }, { "cuisineId": 8 }]
+    },
+    {
+      "restName": "Dev Sweets and Snacks",
+      "description": "Sandwiches, shakes and slushes",
+      "open": true,
+      "Cuisines": [{ "cuisineId": 7 }, { "cuisineId": 5 }]
+    },
+    {
+      "restName": "Belgian Waffle",
+      "description": "The famous waffle chain in MUJ",
+      "open": true,
+      "Cuisines": [{ "cuisineId": 6 }]
+    },
+    {
+      "restName": "Italian Oven",
+      "description": "Pizzas, burgers, wraps",
+      "open": true,
+      "Cuisines": [
+        { "cuisineId": 2 },
+        { "cuisineId": 3 },
+        { "cuisineId": 4 },
+        { "cuisineId": 8 }
+      ]
+    }
+  ],
+  "Cuisines": [
+    { "cuisineId": 1, "cuisineName": "Indian" },
+    { "cuisineId": 2, "cuisineName": "Fast Food" },
+    { "cuisineId": 3, "cuisineName": "Italian" },
+    { "cuisineId": 4, "cuisineName": "Pizzas" },
+    { "cuisineId": 5, "cuisineName": "Milkshakes" },
+    { "cuisineId": 6, "cuisineName": "Desserts" },
+    { "cuisineId": 7, "cuisineName": "Snacks" },
+    { "cuisineId": 8, "cuisineName": "Burgers" }
+  ]
+}
