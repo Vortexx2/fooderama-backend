@@ -7,7 +7,6 @@ import statusCodes from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
 import { zCuisine } from '@utils/zodSchemas/cuisineSchema'
 import { ValidationError } from '../errors'
-
 // Imports above
 
 const cuisineRouter = Router()

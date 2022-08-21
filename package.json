@@ -10,6 +10,7 @@
     "compile": "shx rm -rf ./lib/ && tsc",
     "start": "npm run compile && node lib/",
     "lint": "eslint ./src --ext .js,.ts",
+    "lint-fix": "eslint ./src --ext .js,.ts --fix",
     "prepare": "husky install",
     "precommit": "lint-staged"
   },

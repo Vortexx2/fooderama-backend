@@ -92,7 +92,7 @@ describe('/restaurants', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(400)
-      .end((err, res) => {
+      .end(err => {
         if (err) return done(err)
 
         return done()

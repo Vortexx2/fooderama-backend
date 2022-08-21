@@ -1,0 +1,10 @@
+[
+  { "cuisineId": 1, "cuisineName": "Indian" },
+  { "cuisineId": 2, "cuisineName": "Fast Food" },
+  { "cuisineId": 3, "cuisineName": "Italian" },
+  { "cuisineId": 4, "cuisineName": "Pizzas" },
+  { "cuisineId": 5, "cuisineName": "Milkshakes" },
+  { "cuisineId": 6, "cuisineName": "Desserts" },
+  { "cuisineId": 7, "cuisineName": "Snacks" },
+  { "cuisineId": 8, "cuisineName": "Burgers" }
+]
