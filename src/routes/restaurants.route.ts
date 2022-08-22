@@ -61,7 +61,7 @@ restRouter.get('/', async (req, res, next) => {
       }
     }
 
-    const ORDERBY_OPTIONS = z.enum(['restId', 'restName'])
+    const ORDERBY_OPTIONS = z.enum(['restId', 'restName', 'open'])
     const parsedOrder = ORDERBY_OPTIONS.safeParse(orderby)
     const parsedSort = z.enum(['asc', 'desc']).safeParse(sort)
 
