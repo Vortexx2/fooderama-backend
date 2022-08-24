@@ -1,14 +1,4 @@
-interface RestaurantValidationConfig {
-  readonly MIN_REST_LEN: number
-  readonly MAX_REST_LEN: number
-  readonly MIN_DESC_LEN: number
-  readonly MAX_DESC_LEN: number
-  readonly MIN_RATING: number
-  readonly MAX_RATING: number
-  readonly MAX_CUISINES_CREATION: number
-}
-
-export const restValidationConfig: RestaurantValidationConfig = {
+export const restValidationConfig = {
   MIN_REST_LEN: 3,
   MAX_REST_LEN: 32,
   MIN_DESC_LEN: 4,
@@ -18,24 +8,12 @@ export const restValidationConfig: RestaurantValidationConfig = {
   MAX_CUISINES_CREATION: 5,
 }
 
-interface CuisineValidationConfig {
-  readonly MIN_CUISINE_LEN: number
-  readonly MAX_CUISINE_LEN: number
-}
-
-export const cuisineValidationConfig: CuisineValidationConfig = {
+export const cuisineValidationConfig = {
   MIN_CUISINE_LEN: 4,
   MAX_CUISINE_LEN: 16,
 }
 
-interface MenuValidationConfig {
-  readonly MIN_DISH_LEN: number
-  readonly MAX_DISH_LEN: number
-  readonly MIN_DESC_LEN: number
-  readonly MAX_DESC_LEN: number
-}
-
-export const menuValidationConfig: MenuValidationConfig = {
+export const menuValidationConfig = {
   MIN_DISH_LEN: 3,
   MAX_DISH_LEN: 32,
   MIN_DESC_LEN: 4,
