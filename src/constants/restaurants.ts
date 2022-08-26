@@ -1,3 +1,4 @@
+/** Config object for validation of a restaurant while storing it in the database and while validating request body */
 export const restValidationConfig = {
   MIN_REST_LEN: 3,
   MAX_REST_LEN: 32,
@@ -8,6 +9,7 @@ export const restValidationConfig = {
   MAX_CUISINES_CREATION: 5,
 }
 
+/** Config object for validation of a cuisine while storing it in the database and while validating request body */
 export const cuisineValidationConfig = {
   MIN_CUISINE_LEN: 4,
   MAX_CUISINE_LEN: 16,

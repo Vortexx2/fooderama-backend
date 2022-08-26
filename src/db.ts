@@ -7,6 +7,9 @@ import { initCategory } from '@models/categories.model'
 import { initDish } from '@models/dishes.model'
 import { initCuisine } from '@models/cuisines.model'
 import { initRestaurantCuisine } from '@models/restaurant-cuisines.model'
+import { initUser } from '@models/users.model'
+
+// Imports above
 
 interface DatabaseConfig {
   host: string
@@ -71,6 +74,7 @@ const Category = initCategory(sequelize)
 const Dish = initDish(sequelize)
 const Cuisine = initCuisine(sequelize)
 const RestaurantCuisine = initRestaurantCuisine(sequelize)
+const User = initUser(sequelize)
 
 // associations
 
@@ -115,6 +119,7 @@ const models = {
   Dish,
   Cuisine,
   RestaurantCuisine,
+  User,
 }
 
 /**

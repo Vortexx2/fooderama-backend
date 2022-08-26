@@ -13,6 +13,15 @@
 
 [x] Write E2E testing, for running them before each commit.
 
+[] Add auth
+  - [] Add email and password authentication from the database
+  - [] Add JWTs
+  - [] Add roles
+  - [] Add email verification
+  - [] Add expiry to JWTs
+  - [] Add revoking of JWTs
+  - [] Add banning of accounts by a superadmin
+
 [] Add a veg field to dishes and restaurants.
 
 [] Add really good mock data for restaurants, for testing the frontend and for future use.

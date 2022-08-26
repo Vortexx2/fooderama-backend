@@ -57,4 +57,6 @@ export function initUser(sequelize: Sequelize) {
       timestamps: true,
     }
   )
+
+  return User
 }
