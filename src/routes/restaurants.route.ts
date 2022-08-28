@@ -3,6 +3,7 @@ import {
   InferAttributes,
   FindOptions,
   NonNullFindOptions,
+  Filterable,
 } from 'sequelize/types'
 import { z, ZodError } from 'zod'
 
@@ -12,7 +13,7 @@ import statusCodes from '@constants/status'
 
 import { db } from '../db'
 import { checkNumericalParams } from '@middleware/routing'
-import { Restaurant } from '@models/restaurants.model'
+import { Restaurant, TRestaurant } from '@models/restaurants.model'
 import { assignPropsToObject } from '@utils/routes.util'
 import {
   zRestaurant,
@@ -352,7 +353,7 @@ restRouter.delete(
   async (req, res, next) => {
     try {
       const id = parseInt(req.params.id, 10)
-      const where: Partial<Restaurant> = req.body
+      const where: any = req.body
 
       where['restId'] = id
 
@@ -372,7 +373,7 @@ restRouter.delete('/', async (req, res, next) => {
     const { body } = req
     const whereProps = props
     whereProps.push('id', 'createdAt', 'updatedAt')
-    const where: Partial<Restaurant> = assignPropsToObject(whereProps, body)
+    const where: any = assignPropsToObject(whereProps, body)
 
     const deletedRows = await restService.del({
       where,

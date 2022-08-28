@@ -23,13 +23,14 @@ export class User extends Model<
   declare password: string
 
   // parameters we'll add afterwards
-  // declare phoneNumber: string
   // declare firstName: string
   // declare lastName: string
   // declare isVerified: CreationOptional<boolean>
   // declare resetPasswordToken: CreationOptional<string>
   // declare resetPasswordExpires: CreationOptional<Date>
 }
+
+export type TUser = typeof User
 
 export function initUser(sequelize: Sequelize) {
   User.init(
@@ -45,6 +46,11 @@ export function initUser(sequelize: Sequelize) {
         unique: {
           name: 'email',
           msg: 'Email provided must be unique',
+        },
+        validate: {
+          isEmail: {
+            msg: 'Provided email is not valid',
+          },
         },
       },
       password: {

@@ -43,6 +43,8 @@ export class Restaurant extends Model<
   }
 }
 
+export type TRestaurant = typeof Restaurant
+
 export function initRestaurant(sequelize: Sequelize) {
   Restaurant.init(
     {

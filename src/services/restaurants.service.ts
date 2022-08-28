@@ -1,5 +1,5 @@
 import { db } from '../db'
-import { Restaurant } from '@models/restaurants.model'
+import { Restaurant, TRestaurant } from '@models/restaurants.model'
 import { NotFound } from '../errors'
 
 import type {
@@ -27,9 +27,7 @@ type RestObjOrArr<T extends zRestaurantType | zRestaurantArrayType> =
  *
  * @returns A promise to the array of all the `Restaurant`s in the database.
  */
-export const findAll = async (
-  options?: FindOptions<InferAttributes<Restaurant, { omit: never }>>
-) => {
+export const findAll = async (options?: FindOptions<TRestaurant>) => {
   return models.Restaurant.findAll(options)
 }
 
@@ -40,10 +38,7 @@ export const findAll = async (
  */
 export const find = async (
   id: number,
-  options?: Omit<
-    NonNullFindOptions<InferAttributes<Restaurant, { omit: never }>>,
-    'where'
-  >
+  options?: Omit<NonNullFindOptions<TRestaurant>, 'where'>
 ) => {
   return models.Restaurant.findByPk(id, options)
 }
@@ -80,7 +75,10 @@ export const create = async <T extends zRestaurantType | zRestaurantArrayType>(
 export const update = async (
   id: number,
   payload: Partial<zRestaurantType>,
-  options?: InstanceUpdateOptions<InferAttributes<Restaurant, { omit: never }>>
+
+  options?: InstanceUpdateOptions<
+    InferAttributes<Restaurant, { omit: 'Cuisines' | 'Categories' }>
+  >
 ) => {
   const rest = await Restaurant.findByPk(id)
 
@@ -98,8 +96,6 @@ export const update = async (
  * @param whereObj this is the `where` parameter that will be passed into the `destroy` sequelize method (the `WHERE` that is written in SQL statements)
  * @returns A promise to the number of records destroyed
  */
-export const del = async (
-  whereObj: Filterable<InferAttributes<Restaurant, { omit: never }>>
-) => {
+export const del = async (whereObj: Filterable<TRestaurant>) => {
   return await Restaurant.destroy(whereObj)
 }

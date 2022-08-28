@@ -9,6 +9,7 @@ import { cuisineValidationConfig as config } from '@constants/restaurants'
 export const zCuisine = z.object({
   cuisineName: z
     .string()
+    .trim()
     .min(config.MIN_CUISINE_LEN)
     .max(config.MAX_CUISINE_LEN),
 })
