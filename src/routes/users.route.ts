@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { ZodError } from 'zod'
-import { hash } from 'bcrypt'
+import { z, ZodError } from 'zod'
+import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import * as userService from '@services/users.service'
@@ -29,7 +29,7 @@ userRouter.get('/', async (req, res, next) => {
 userRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10)
-    const user = await userService.find(id)
+    const user = await userService.findById(id)
 
     res.status(statusCodes.OK).json(user)
   } catch (err) {
@@ -46,6 +46,7 @@ userRouter.post('/signup', async (req, res, next) => {
     const parsedUser = zUser.parse(body)
     const hashedPass = await hash(parsedUser.password, 10)
 
+    // user object that will be used to insert into the database
     const toBeUser = {
       email: parsedUser.email,
       password: hashedPass,
@@ -55,16 +56,19 @@ userRouter.post('/signup', async (req, res, next) => {
       transaction,
     })
 
+    // if the create method by chance returns void (idk why this is possible, but upon adding options to the create method, there is a possibility it returns void)
     if (!insertedUser) {
       throw new GeneralError('Error while creating user')
     }
 
+    // the user object which will be used to create a jwt from
     const user = {
       id: insertedUser.userId,
       email: parsedUser.email,
     }
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
 
+    // commit transaction and send the response
     await transaction.commit()
     res.status(statusCodes.OK).json({ accessToken })
   } catch (err) {
@@ -72,6 +76,62 @@ userRouter.post('/signup', async (req, res, next) => {
 
     if (err instanceof ZodError) {
       next(new ValidationError('Validation error during signup', err.flatten()))
+    }
+    next(err)
+  }
+})
+
+userRouter.post('/login', async (req, res, next) => {
+  const body: JSONBody = req.body
+
+  try {
+    if (Array.isArray(body)) {
+      throw new ValidationError('Request body should be an object')
+    } else {
+      const zCheckedUserSchema = z.object({
+        email: z.string().email(),
+        password: z.string().max(256),
+      })
+
+      // user object that will be checked against the database
+      const toBeCheckedUser = zCheckedUserSchema.parse(body)
+
+      // dbUser will only have a value if it is found in the database
+      const dbUser = await userService.findOne({
+        where: {
+          email: toBeCheckedUser.email,
+        },
+      })
+
+      // User with this email does not exist in database
+      if (!dbUser) {
+        throw new ValidationError('Invalid username or password')
+      }
+
+      // true only if the passwords match
+      const compareResult = await compare(
+        toBeCheckedUser.password,
+        dbUser.password
+      )
+
+      // if password provided does not match with the one in the database
+      if (!compareResult) {
+        throw new ValidationError('Invalid email or password')
+      }
+
+      // user object to be signed as jwt
+      const user = {
+        id: dbUser.userId,
+        email: dbUser.email,
+      }
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
+
+      // send back the accessToken as the response
+      res.status(statusCodes.OK).json({ accessToken })
+    }
+  } catch (err) {
+    if (err instanceof ZodError) {
+      next(new ValidationError('Invalid email or password', err.flatten()))
     }
     next(err)
   }
