@@ -6,11 +6,12 @@ import jwt from 'jsonwebtoken'
 import * as userService from '@services/users.service'
 import statusCodes from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
-import { GeneralError, ValidationError } from 'errors'
+import { GeneralError, Unauthorized, ValidationError } from 'errors'
 import { JSONBody } from '@declarations/response'
 import { zUser } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
 import { User } from '@models/users.model'
+import { validateJWT } from '@middleware/auth'
 // Imports above
 
 /** A new individual user router for integration into the main router */
@@ -81,7 +82,7 @@ userRouter.post('/signup', async (req, res, next) => {
   }
 })
 
-userRouter.post('/login', async (req, res, next) => {
+userRouter.post('/login', validateJWT(), async (req, res, next) => {
   const body: JSONBody = req.body
 
   try {
@@ -116,7 +117,7 @@ userRouter.post('/login', async (req, res, next) => {
 
       // if password provided does not match with the one in the database
       if (!compareResult) {
-        throw new ValidationError('Invalid email or password')
+        throw new Unauthorized('Invalid email or password')
       }
 
       // user object to be signed as jwt

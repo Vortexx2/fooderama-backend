@@ -1,5 +1,7 @@
+import { JSONBody } from '@declarations/response'
 import { Request, Response, NextFunction } from 'express'
 import { BadRequest } from '../errors'
+// Imports above
 
 /**
  * Validates if all numerical parameters that are in the path are valid numerical values.

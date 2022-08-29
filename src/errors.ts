@@ -84,7 +84,7 @@ export class BadRequest extends CustomError {
 }
 
 // 401 - Not Authenticated
-export class NotAuthenticated extends CustomError {
+export class Unauthorized extends CustomError {
   constructor(message?: ErrorMessage, data?: any) {
     super(message, 'NotAuthenticated', 401, 'not-authenticated', data)
   }
