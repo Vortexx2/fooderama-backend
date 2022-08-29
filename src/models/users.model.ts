@@ -45,7 +45,7 @@ export function initUser(sequelize: Sequelize) {
         allowNull: false,
         unique: {
           name: 'email',
-          msg: 'Email provided must be unique',
+          msg: 'Provided email must be unique',
         },
         validate: {
           isEmail: {
@@ -54,7 +54,7 @@ export function initUser(sequelize: Sequelize) {
         },
       },
       password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(64),
         allowNull: false,
       },
     },
