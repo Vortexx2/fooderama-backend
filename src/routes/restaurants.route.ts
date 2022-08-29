@@ -3,7 +3,6 @@ import {
   InferAttributes,
   FindOptions,
   NonNullFindOptions,
-  Filterable,
 } from 'sequelize/types'
 import { z, ZodError } from 'zod'
 
@@ -13,7 +12,7 @@ import statusCodes from '@constants/status'
 
 import { db } from '../db'
 import { checkNumericalParams } from '@middleware/routing'
-import { Restaurant, TRestaurant } from '@models/restaurants.model'
+import { Restaurant } from '@models/restaurants.model'
 import { assignPropsToObject } from '@utils/routes.util'
 import {
   zRestaurant,

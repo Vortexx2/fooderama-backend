@@ -77,7 +77,7 @@ describe('/restaurants', () => {
         .set('Accept', 'application/json')
         .expect('Content-Type', /json/)
         .expect(creationRestaurant.error)
-        .end((err, res) => {
+        .end(err => {
           if (err) return done(err)
 
           return done()

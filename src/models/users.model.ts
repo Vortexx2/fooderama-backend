@@ -5,8 +5,8 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  Association,
-  NonAttribute,
+  // Association,
+  // NonAttribute,
 } from 'sequelize'
 
 import { userValidationConfig as config } from '@constants/users'

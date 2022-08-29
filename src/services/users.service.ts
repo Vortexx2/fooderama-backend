@@ -1,8 +1,4 @@
-import {
-  FindOptions,
-  InferAttributes,
-  NonNullFindOptions,
-} from 'sequelize/types'
+import { FindOptions, NonNullFindOptions } from 'sequelize/types'
 
 import { db } from 'db'
 import { TUser } from '@models/users.model'
