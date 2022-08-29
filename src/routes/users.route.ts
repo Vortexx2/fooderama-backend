@@ -10,8 +10,8 @@ import { GeneralError, Unauthorized, ValidationError } from 'errors'
 import { JSONBody } from '@declarations/response'
 import { zUser } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
-import { User } from '@models/users.model'
 import { validateJWT } from '@middleware/auth'
+import logger from 'logger'
 // Imports above
 
 /** A new individual user router for integration into the main router */
@@ -66,6 +66,13 @@ userRouter.post('/signup', async (req, res, next) => {
     const user = {
       id: insertedUser.userId,
       email: parsedUser.email,
+    }
+
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      logger.error(
+        "Environment variable ACCESS_TOKEN_SECRET not configured, variable 'test' being used instead"
+      )
+      process.env.ACCESS_TOKEN_SECRET = 'test'
     }
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
 
@@ -125,7 +132,14 @@ userRouter.post('/login', validateJWT(), async (req, res, next) => {
         id: dbUser.userId,
         email: dbUser.email,
       }
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
+
+      if (!process.env.ACCESS_TOKEN_SECRET) {
+        logger.error(
+          "Environment variable ACCESS_TOKEN_SECRET not configured, variable 'test' being used instead"
+        )
+        process.env.ACCESS_TOKEN_SECRET = 'test'
+      }
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
 
       // send back the accessToken as the response
       res.status(statusCodes.OK).json({ accessToken })

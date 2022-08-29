@@ -1,4 +1,3 @@
-import { JSONBody } from '@declarations/response'
 import { Request, Response, NextFunction } from 'express'
 import { BadRequest } from '../errors'
 // Imports above
