@@ -94,7 +94,7 @@ userRouter.post('/signup', async (req, res, next) => {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'), {
+    const accessToken = jwt.sign(user, config.get('PRIVATE_ACCESS_KEY'), {
       algorithm: 'RS256',
       expiresIn: TOKEN_EXPIRY,
     })
@@ -156,7 +156,7 @@ userRouter.post('/login', async (req, res, next) => {
         email: dbUser.email,
       }
 
-      const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'), {
+      const accessToken = jwt.sign(user, config.get('PRIVATE_REFRESH_KEY'), {
         algorithm: 'RS256',
         expiresIn: TOKEN_EXPIRY,
       })

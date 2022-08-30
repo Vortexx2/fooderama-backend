@@ -23,7 +23,10 @@ export function validateJWT() {
 
       // below decodes the user object from the jwt and sets it on the request object
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const user = jwt.verify(token, config.get('PUBLIC_KEY')) as JwtPayload
+      const user = jwt.verify(
+        token,
+        config.get('PUBLIC_ACCESS_KEY')
+      ) as JwtPayload
 
       // set the user property on the request object, so that we can pass it along
       req.user = user

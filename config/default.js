@@ -3,11 +3,15 @@ const fs = require('fs')
 // All default config settings are defined below
 // They can be imported anywhere through config.get('attr')
 
-let PUBLIC_KEY = null
-let PRIVATE_KEY = null
+let PUBLIC_ACCESS_KEY = null
+let PRIVATE_ACCESS_KEY = null
+let PUBLIC_REFRESH_KEY = null
+let PRIVATE_REFRESH_KEY = null
 try {
-  PUBLIC_KEY = fs.readFileSync(__dirname + '/access.public.pem', 'utf-8')
-  PRIVATE_KEY = fs.readFileSync(__dirname + '/access.private.pem', 'utf-8')
+  PUBLIC_ACCESS_KEY = fs.readFileSync(__dirname + '/access.public.pem', 'utf-8')
+  PRIVATE_ACCESS_KEY = fs.readFileSync(__dirname + '/access.private.pem', 'utf-8')
+  PUBLIC_REFRESH_KEY = fs.readFileSync(__dirname + '/refresh.public.pem', 'utf-8')
+  PRIVATE_REFRESH_KEY = fs.readFileSync(__dirname + '/refresh.private.pem', 'utf-8')
 } catch (err) {
   console.error(
     'No Private and Public keys present in the config directory. Please follow readme to configure them'
@@ -31,7 +35,9 @@ module.exports = {
     'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&w=1000&q=80',
   corsSettings: {},
   helmetSettings: { contentSecurityPolicy: false },
-  PUBLIC_KEY,
-  PRIVATE_KEY,
+  PUBLIC_ACCESS_KEY,
+  PRIVATE_ACCESS_KEY,
+  PUBLIC_REFRESH_KEY,
+  PRIVATE_REFRESH_KEY,
   tokenExpiryTime: '15s',
 }
