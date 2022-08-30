@@ -3,6 +3,7 @@ import 'dotenv/config'
 import helmet from 'helmet'
 import cors from 'cors'
 import express, { Request, Response } from 'express'
+import cookieParser from 'cookie-parser'
 
 import router from '@routes/index'
 import {
@@ -24,6 +25,7 @@ export default async function createApp(config: any) {
 
   // set all headers and settings for express
   app.use(express.json())
+  app.use(cookieParser())
   app.use(cors(config.get('corsSettings')))
   app.use(helmet(config.get('helmetSettings')))
 

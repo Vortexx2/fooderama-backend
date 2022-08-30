@@ -29,4 +29,20 @@ export const zUser = z.object({
     ),
 })
 
+export const zUserCookies = z.object({
+  refresh_token: z.string().regex(config.JWT_REGEX),
+  userId: z.string().transform((val, ctx) => {
+    const parsed = parseInt(val, 10)
+
+    if (isNaN(parsed)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'userId is not a number',
+      })
+    }
+
+    return parsed
+  }),
+})
+
 export type zUserType = z.infer<typeof zUser>

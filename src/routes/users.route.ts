@@ -9,9 +9,10 @@ import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
 import { GeneralError, Unauthorized, ValidationError } from 'errors'
 import { JSONBody } from '@declarations/express'
-import { zUser } from '@utils/zodSchemas/userSchema'
+import { zUser, zUserCookies } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
 import { validateJWT, isSignedIn } from '@middleware/auth'
+import { canRefreshAccess, createToken } from '@utils/auth.utils'
 
 // Imports above
 
@@ -27,7 +28,7 @@ userRouter.get('/', validateJWT(), isSignedIn(), async (req, res, next) => {
   try {
     const users = await userService.findAll({
       attributes: {
-        exclude: ['password'],
+        exclude: ['password', 'refreshToken'],
       },
     })
 
@@ -51,7 +52,7 @@ userRouter.get(
       const id = parseInt(req.params.id, 10)
       const user = await userService.findById(id, {
         attributes: {
-          exclude: ['password'],
+          exclude: ['password', 'refreshToken'],
         },
         rejectOnEmpty: false,
       })
@@ -93,15 +94,19 @@ userRouter.post('/signup', async (req, res, next) => {
       email: parsedUser.email,
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const accessToken = jwt.sign(user, config.get('PRIVATE_ACCESS_KEY'), {
-      algorithm: 'RS256',
-      expiresIn: TOKEN_EXPIRY,
-    })
+    const accessToken = createToken(
+      user,
+      config.get('PRIVATE_ACCESS_KEY'),
+      TOKEN_EXPIRY
+    )
+
+    const refreshToken = createToken(user, config.get('PRIVATE_REFRESH_KEY'))
+
+    await insertedUser.update({ refreshToken }, { transaction })
 
     // commit transaction and send the response
     await transaction.commit()
-    res.status(statusCodes.OK).json({ accessToken })
+    res.status(statusCodes.OK).json({ accessToken, refreshToken })
   } catch (err) {
     await transaction.rollback()
 
@@ -156,19 +161,64 @@ userRouter.post('/login', async (req, res, next) => {
         email: dbUser.email,
       }
 
-      const accessToken = jwt.sign(user, config.get('PRIVATE_REFRESH_KEY'), {
-        algorithm: 'RS256',
-        expiresIn: TOKEN_EXPIRY,
-      })
+      const accessToken = createToken(
+        user,
+        config.get('PRIVATE_ACCESS_KEY'),
+        TOKEN_EXPIRY
+      )
 
-      // send back the accessToken as the response
-      res.status(statusCodes.OK).json({ accessToken })
+      const refreshToken = createToken(user, config.get('PRIVATE_REFRESH_KEY'))
+
+      await dbUser.update('refreshToken', refreshToken)
+
+      // send back the accessToken and the refreshToken as the response
+      res.status(statusCodes.OK).json({ accessToken, refreshToken })
     }
   } catch (err) {
     if (err instanceof ZodError) {
       next(new ValidationError('Invalid email or password', err.flatten()))
     }
     next(err)
+  }
+})
+
+userRouter.post('/refresh', async (req, res, next) => {
+  try {
+    const cookies = zUserCookies.parse(req.cookies)
+
+    const { refresh_token, userId } = cookies
+
+    const foundUser = await userService.findOne({
+      where: {
+        userId,
+      },
+    })
+
+    // If userId provided in the cookies is invalid
+    if (!foundUser) {
+      throw new Unauthorized('Invalid cookies')
+    }
+
+    console.log(`registered token: ${foundUser.refreshToken}`)
+    if (!canRefreshAccess(foundUser, refresh_token)) {
+      throw new Unauthorized('Invalid cookies')
+    }
+
+    const accessToken = createToken(
+      { id: userId, email: foundUser.email },
+      config.get('PRIVATE_ACCESS_KEY'),
+      TOKEN_EXPIRY
+    )
+
+    res
+      .status(statusCodes.OK)
+      .json({ accessToken, refreshToken: refresh_token })
+  } catch (err) {
+    if (err instanceof ZodError) {
+      next(new Unauthorized('Invalid cookies'))
+    } else {
+      next(err)
+    }
   }
 })
 

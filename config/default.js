@@ -39,5 +39,5 @@ module.exports = {
   PRIVATE_ACCESS_KEY,
   PUBLIC_REFRESH_KEY,
   PRIVATE_REFRESH_KEY,
-  tokenExpiryTime: '15s',
+  tokenExpiryTime: '15m',
 }
