@@ -16,9 +16,10 @@
 [] Add auth
   - [x] Add email and password authentication from the database
   - [x] Add JWTs
-  - [] Add asymmetric keys
+  - [x] Add asymmetric keys
   - [] Add expiry to JWTs
   - [] Add roles
+  - [] Add rate limiting to all authentication routes.
   - [] Add email verification
   - [] Add revoking of JWTs
   - [] Add banning of accounts by a superadmin

@@ -3,6 +3,7 @@ import { z, ZodError } from 'zod'
 import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
+import config from 'config'
 import * as userService from '@services/users.service'
 import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
@@ -11,6 +12,7 @@ import { JSONBody } from '@declarations/express'
 import { zUser } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
 import { validateJWT, isSignedIn } from '@middleware/auth'
+
 // Imports above
 
 /** A new individual user router for integration into the main router */
@@ -87,7 +89,7 @@ userRouter.post('/signup', async (req, res, next) => {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!, {
+    const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'), {
       algorithm: 'RS256',
     })
 
@@ -148,8 +150,7 @@ userRouter.post('/login', async (req, res, next) => {
         email: dbUser.email,
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
+      const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'))
 
       // send back the accessToken as the response
       res.status(statusCodes.OK).json({ accessToken })
