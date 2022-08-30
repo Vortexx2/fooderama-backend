@@ -4,14 +4,12 @@ import { hash, compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 import * as userService from '@services/users.service'
-import statusCodes from '@constants/status'
+import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
 import { GeneralError, Unauthorized, ValidationError } from 'errors'
-import { JSONBody } from '@declarations/response'
+import { JSONBody } from '@declarations/express'
 import { zUser } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
-import { validateJWT } from '@middleware/auth'
-import logger from 'logger'
 // Imports above
 
 /** A new individual user router for integration into the main router */
@@ -68,12 +66,7 @@ userRouter.post('/signup', async (req, res, next) => {
       email: parsedUser.email,
     }
 
-    if (!process.env.ACCESS_TOKEN_SECRET) {
-      logger.error(
-        "Environment variable ACCESS_TOKEN_SECRET not configured, variable 'test' being used instead"
-      )
-      process.env.ACCESS_TOKEN_SECRET = 'test'
-    }
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
 
     // commit transaction and send the response
@@ -89,7 +82,7 @@ userRouter.post('/signup', async (req, res, next) => {
   }
 })
 
-userRouter.post('/login', validateJWT(), async (req, res, next) => {
+userRouter.post('/login', async (req, res, next) => {
   const body: JSONBody = req.body
 
   try {
@@ -113,7 +106,7 @@ userRouter.post('/login', validateJWT(), async (req, res, next) => {
 
       // User with this email does not exist in database
       if (!dbUser) {
-        throw new ValidationError('Invalid username or password')
+        throw new ValidationError('Invalid email or password')
       }
 
       // true only if the passwords match
@@ -133,13 +126,8 @@ userRouter.post('/login', validateJWT(), async (req, res, next) => {
         email: dbUser.email,
       }
 
-      if (!process.env.ACCESS_TOKEN_SECRET) {
-        logger.error(
-          "Environment variable ACCESS_TOKEN_SECRET not configured, variable 'test' being used instead"
-        )
-        process.env.ACCESS_TOKEN_SECRET = 'test'
-      }
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
 
       // send back the accessToken as the response
       res.status(statusCodes.OK).json({ accessToken })

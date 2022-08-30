@@ -1,27 +1,37 @@
 import { NextFunction, Request, Response } from 'express'
-import jwt, { JsonWebTokenError } from 'jsonwebtoken'
+import jwt, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken'
 
 import { Unauthorized } from 'errors'
-import statusCodes from '@constants/status'
+import { getJWTFromHeader } from '@utils/auth.utils'
+import { RequestWithUser } from '@declarations/express'
+import { statusCodes } from '@constants/status'
 // Imports above
 
+export function isSignedIn() {
+  return (req: RequestWithUser, res: Response, next: NextFunction) => {
+    req.user ? next() : next(new Unauthorized('User is unauthorized'))
+  }
+}
+
 export function validateJWT() {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const token = req.headers['authorization']?.split(' ')[1]
+      const token = getJWTFromHeader(req.headers['authorization'])
 
-      if (!token) {
-        next()
-      } else {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!)
+      // below decodes the user object from the jwt and sets it on the request object
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const user = jwt.verify(
+        token,
+        process.env.ACCESS_TOKEN_SECRET!
+      ) as JwtPayload
 
-        res.status(statusCodes.OK).json({ accessToken: token })
-      }
+      // set the user property on the request object, so that we can pass it along
+      req.user = user
+      next()
     } catch (err) {
       if (err instanceof JsonWebTokenError) {
         next(new Unauthorized('Malformed JWT'))
-      }
-      next(err)
+      } else next(err)
     }
   }
 }

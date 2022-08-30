@@ -8,7 +8,7 @@ import { z, ZodError } from 'zod'
 
 import * as restService from '@services/restaurants.service'
 import * as cuisineService from '@services/cuisines.service'
-import statusCodes from '@constants/status'
+import { statusCodes } from '@constants/status'
 
 import { db } from '../db'
 import { checkNumericalParams } from '@middleware/routing'
@@ -21,7 +21,7 @@ import {
 } from '@utils/zodSchemas/restSchema'
 import { ValidationError } from '../errors'
 
-import { JSONBody } from '@declarations/response'
+import { JSONBody } from '@declarations/express'
 // Imports Above
 
 /**

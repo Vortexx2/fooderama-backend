@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { ZodError } from 'zod'
 
 import * as cuisineService from '@services/cuisines.service'
-import statusCodes from '@constants/status'
+import { statusCodes } from '@constants/status'
 
 import { checkNumericalParams } from '@middleware/routing'
 import { zCuisine } from '@utils/zodSchemas/cuisineSchema'
