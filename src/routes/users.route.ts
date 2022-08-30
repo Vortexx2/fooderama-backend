@@ -87,7 +87,9 @@ userRouter.post('/signup', async (req, res, next) => {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!)
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET!, {
+      algorithm: 'RS256',
+    })
 
     // commit transaction and send the response
     await transaction.commit()

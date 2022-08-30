@@ -10,3 +10,4 @@ lib/
 
 # .env file
 .env
+*.pem

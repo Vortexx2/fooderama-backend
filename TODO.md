@@ -14,11 +14,12 @@
 [x] Write E2E testing, for running them before each commit.
 
 [] Add auth
-  - [] Add email and password authentication from the database
-  - [] Add JWTs
+  - [x] Add email and password authentication from the database
+  - [x] Add JWTs
+  - [] Add asymmetric keys
+  - [] Add expiry to JWTs
   - [] Add roles
   - [] Add email verification
-  - [] Add expiry to JWTs
   - [] Add revoking of JWTs
   - [] Add banning of accounts by a superadmin
 
