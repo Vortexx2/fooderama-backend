@@ -28,8 +28,10 @@
 
 8. Generate a RSA private and public keypair:
 
-   - Use the below command to generate a private key and copy it to `config/private.pem`:<br/>
+   - Use the below command to generate a private key and copy it to `config/access.private.pem`:<br/>
      `openssl genrsa`
 
    - Derive a public key from the private key using the following command:<br/>
-     `openssl rsa -in config/private.pem -pubout -out config/public.pem`
+     `openssl rsa -in config/access.private.pem -pubout -out config/access.public.pem`
+
+   - Similarly, do it for the keys for the refresh token as well. 
