@@ -4,9 +4,11 @@ import jwt, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken'
 import { Unauthorized } from 'errors'
 import { getJWTFromHeader } from '@utils/auth.utils'
 import { RequestWithUser } from '@declarations/express'
-import { statusCodes } from '@constants/status'
 // Imports above
 
+/**
+ * Checks if there a user property has been set on the request body, else an error is thrown
+ */
 export function isSignedIn() {
   return (req: RequestWithUser, res: Response, next: NextFunction) => {
     req.user ? next() : next(new Unauthorized('User is unauthorized'))

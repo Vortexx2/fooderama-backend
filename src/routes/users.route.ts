@@ -10,14 +10,19 @@ import { GeneralError, Unauthorized, ValidationError } from 'errors'
 import { JSONBody } from '@declarations/express'
 import { zUser } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
+import { validateJWT, isSignedIn } from '@middleware/auth'
 // Imports above
 
 /** A new individual user router for integration into the main router */
 const userRouter = Router()
 
-userRouter.get('/', async (req, res, next) => {
+userRouter.get('/', validateJWT(), isSignedIn(), async (req, res, next) => {
   try {
-    const users = await userService.findAll()
+    const users = await userService.findAll({
+      attributes: {
+        exclude: ['password'],
+      },
+    })
 
     res.status(statusCodes.OK).json(users)
   } catch (err) {
@@ -25,16 +30,31 @@ userRouter.get('/', async (req, res, next) => {
   }
 })
 
-userRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
-  try {
-    const id = parseInt(req.params.id, 10)
-    const user = await userService.findById(id)
+userRouter.get(
+  '/:id',
+  checkNumericalParams('id'),
 
-    res.status(statusCodes.OK).json(user)
-  } catch (err) {
-    next(err)
+  // check if JWT is valid and set the req.user property
+  validateJWT(),
+
+  // check if req.user property was properly set
+  isSignedIn(),
+  async (req, res, next) => {
+    try {
+      const id = parseInt(req.params.id, 10)
+      const user = await userService.findById(id, {
+        attributes: {
+          exclude: ['password'],
+        },
+        rejectOnEmpty: false,
+      })
+
+      res.status(statusCodes.OK).json(user)
+    } catch (err) {
+      next(err)
+    }
   }
-})
+)
 
 userRouter.post('/signup', async (req, res, next) => {
   const body: JSONBody = req.body
