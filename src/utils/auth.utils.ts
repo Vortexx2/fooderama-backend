@@ -1,4 +1,5 @@
 import { Unauthorized } from 'errors'
+import { userValidationConfig as config } from '@constants/users'
 // Imports above
 
 /**
@@ -17,7 +18,7 @@ export function getJWTFromHeader(authHeader: string | undefined) {
   if (
     wordArray.length === 2 &&
     wordArray[0] === 'Bearer' &&
-    wordArray[1].match(/\S*\.\S*\.\S*/)
+    wordArray[1].match(config.JWT_REGEX)
   ) {
     return wordArray[1]
   } else {

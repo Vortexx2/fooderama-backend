@@ -21,6 +21,7 @@ export class User extends Model<
   // we'll have email and phone number both because if a user wants to reset their password, it might be much cheaper to send a reset mail rather than a text with OTP
   declare email: string
   declare password: string
+  declare refreshToken: CreationOptional<string>
 
   // parameters we'll add afterwards
   // declare firstName: string
@@ -56,6 +57,13 @@ export function initUser(sequelize: Sequelize) {
       password: {
         type: DataTypes.STRING(64),
         allowNull: false,
+      },
+      refreshToken: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        validate: {
+          is: config.JWT_REGEX,
+        },
       },
     },
     {
