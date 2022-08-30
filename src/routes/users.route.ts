@@ -15,6 +15,11 @@ import { validateJWT, isSignedIn } from '@middleware/auth'
 
 // Imports above
 
+/** Gets the `tokenExpiryTime` from the config, if not there it defaults to `'10m'` */
+const TOKEN_EXPIRY = config.has('tokenExpiryTime')
+  ? (config.get('tokenExpiryTime') as string)
+  : '10m'
+
 /** A new individual user router for integration into the main router */
 const userRouter = Router()
 
@@ -91,6 +96,7 @@ userRouter.post('/signup', async (req, res, next) => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'), {
       algorithm: 'RS256',
+      expiresIn: TOKEN_EXPIRY,
     })
 
     // commit transaction and send the response
@@ -150,7 +156,10 @@ userRouter.post('/login', async (req, res, next) => {
         email: dbUser.email,
       }
 
-      const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'))
+      const accessToken = jwt.sign(user, config.get('PRIVATE_KEY'), {
+        algorithm: 'RS256',
+        expiresIn: TOKEN_EXPIRY,
+      })
 
       // send back the accessToken as the response
       res.status(statusCodes.OK).json({ accessToken })

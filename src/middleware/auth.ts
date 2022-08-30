@@ -30,7 +30,7 @@ export function validateJWT() {
       next()
     } catch (err) {
       if (err instanceof JsonWebTokenError) {
-        next(new Unauthorized('Malformed JWT'))
+        next(new Unauthorized(err.message))
       } else next(err)
     }
   }
