@@ -25,3 +25,11 @@
 - I named it **default**
 
 7. Create a database in it called **fooderama-test**.
+
+8. Generate a RSA private and public keypair:
+
+   - Use the below command to generate a private key and copy it to `config/private.pem`:<br/>
+     `openssl genrsa`
+
+   - Derive a public key from the private key using the following command:<br/>
+     `openssl rsa -in config/private.pem -pubout -out config/public.pem`
