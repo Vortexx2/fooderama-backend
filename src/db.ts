@@ -1,4 +1,4 @@
-import { Sequelize, AssociationOptions } from 'sequelize'
+import { Sequelize, HasOneOptions } from 'sequelize'
 import config from 'config'
 
 import logger from './logger'
@@ -93,7 +93,7 @@ Cuisine.associations.Restaurants = Cuisine.belongsToMany(Restaurant, {
 })
 
 // Restaurants 1 : m Categories
-const assOptions: AssociationOptions = {
+const assOptions: HasOneOptions = {
   foreignKey: {
     name: 'restId',
     allowNull: false,
@@ -132,6 +132,10 @@ assOptions.foreignKey = {
 User.associations.Manager = User.hasOne(Manager, assOptions)
 Manager.associations.User = Manager.belongsTo(User, assOptions)
 
+// Admin.addHook('beforeCreate', (attrs, options) => {
+//   if (attrs.userId)
+// })
+
 /**
  * The object where all of the intialised models are stored for later reference.
  */
@@ -143,6 +147,7 @@ const models = {
   RestaurantCuisine,
   User,
   Admin,
+  Manager,
 }
 
 /**
