@@ -17,12 +17,12 @@
   - [x] Add email and password authentication from the database
   - [x] Add JWTs
   - [x] Add asymmetric keys
-  - [] Add expiry to JWTs
+  - [x] Add expiry to JWTs
   - [] Add roles
-  - [] Add rate limiting to all authentication routes.
-  - [] Add email verification
   - [] Add revoking of JWTs
   - [] Add banning of accounts by a superadmin
+  - [] Add rate limiting to all authentication routes.
+  - [] Add email verification
 
 [] Add a veg field to dishes and restaurants.
 

@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize, AssociationOptions } from 'sequelize'
 import config from 'config'
 
 import logger from './logger'
@@ -8,6 +8,7 @@ import { initDish } from '@models/dishes.model'
 import { initCuisine } from '@models/cuisines.model'
 import { initRestaurantCuisine } from '@models/restaurant-cuisines.model'
 import { initUser } from '@models/users.model'
+import { initAdmin } from '@models/admins.model'
 
 // Imports above
 
@@ -75,6 +76,7 @@ const Dish = initDish(sequelize)
 const Cuisine = initCuisine(sequelize)
 const RestaurantCuisine = initRestaurantCuisine(sequelize)
 const User = initUser(sequelize)
+const Admin = initAdmin(sequelize)
 
 // associations
 
@@ -89,26 +91,33 @@ Cuisine.associations.Restaurants = Cuisine.belongsToMany(Restaurant, {
 })
 
 // Restaurants 1 : m Categories
-Restaurant.associations.Categories = Restaurant.hasMany(Category, {
+const assOptions: AssociationOptions = {
   foreignKey: {
     name: 'restId',
     allowNull: false,
   },
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE',
-})
-Category.associations.Restaurant = Category.belongsTo(Restaurant)
+}
+Restaurant.associations.Categories = Restaurant.hasMany(Category, assOptions)
+
+Category.associations.Restaurant = Category.belongsTo(Restaurant, assOptions)
 
 // Categories 1 : m Dishes
-Category.associations.Dishes = Category.hasMany(Dish, {
-  foreignKey: {
-    name: 'categoryId',
-    allowNull: false,
-  },
-  onDelete: 'SET NULL',
-  onUpdate: 'CASCADE',
-})
-Dish.associations.Category = Dish.belongsTo(Category)
+assOptions.foreignKey = {
+  name: 'categoryId',
+  allowNull: false,
+}
+Category.associations.Dishes = Category.hasMany(Dish, assOptions)
+Dish.associations.Category = Dish.belongsTo(Category, assOptions)
+
+// Admin 1 : 1 User (if User is Admin)
+assOptions.foreignKey = {
+  name: 'userId',
+  allowNull: false,
+}
+User.associations.Admin = User.hasOne(Admin, assOptions)
+Admin.associations.User = Admin.belongsTo(User, assOptions)
 
 /**
  * The object where all of the intialised models are stored for later reference.
@@ -120,6 +129,7 @@ const models = {
   Cuisine,
   RestaurantCuisine,
   User,
+  Admin,
 }
 
 /**
