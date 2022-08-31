@@ -5,11 +5,13 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  // Association,
-  // NonAttribute,
+  NonAttribute,
+  Association,
 } from 'sequelize'
 
 import { userValidationConfig as config } from '@constants/users'
+import { Admin } from './admins.model'
+import { Manager } from './managers.model'
 // Imports above
 
 export class User extends Model<
@@ -29,6 +31,15 @@ export class User extends Model<
   // declare isVerified: CreationOptional<boolean>
   // declare resetPasswordToken: CreationOptional<string>
   // declare resetPasswordExpires: CreationOptional<Date>
+
+  declare Admin?: NonAttribute<Admin>
+
+  declare static associations: {
+    // Admin 1: 1 User if User is an Admin
+    Admin: Association<User, Admin>
+    // Manager 1: 1 User if User is an Manager
+    Manager: Association<User, Manager>
+  }
 }
 
 export type TUser = typeof User

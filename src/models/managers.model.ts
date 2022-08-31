@@ -12,24 +12,24 @@ import {
 import { User } from './users.model'
 // Imports above
 
-export class Admin extends Model<
-  InferAttributes<Admin, { omit: never }>,
-  InferCreationAttributes<Admin, { omit: never }>
+export class Manager extends Model<
+  InferAttributes<Manager, { omit: never }>,
+  InferCreationAttributes<Manager, { omit: never }>
 > {
-  declare adminId: CreationOptional<number>
+  declare managerId: CreationOptional<number>
 
   declare User?: NonAttribute<User>
 
   declare static associations: {
-    // Admin 1: 1 User if User is an Admin
-    User: Association<Admin, User>
+    // Admin 1: 1 User if if User is an Admin
+    User: Association<Manager, User>
   }
 }
 
-export function initAdmin(sequelize: Sequelize) {
-  Admin.init(
+export function initManager(sequelize: Sequelize) {
+  Manager.init(
     {
-      adminId: {
+      managerId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -41,5 +41,5 @@ export function initAdmin(sequelize: Sequelize) {
     }
   )
 
-  return Admin
+  return Manager
 }
