@@ -8,8 +8,6 @@ import { initDish } from '@models/dishes.model'
 import { initCuisine } from '@models/cuisines.model'
 import { initRestaurantCuisine } from '@models/restaurant-cuisines.model'
 import { initUser } from '@models/users.model'
-import { initAdmin } from '@models/admins.model'
-import { initManager } from '@models/managers.model'
 
 // Imports above
 
@@ -77,8 +75,6 @@ const Dish = initDish(sequelize)
 const Cuisine = initCuisine(sequelize)
 const RestaurantCuisine = initRestaurantCuisine(sequelize)
 const User = initUser(sequelize)
-const Admin = initAdmin(sequelize)
-const Manager = initManager(sequelize)
 
 // associations
 
@@ -113,29 +109,6 @@ assOptions.foreignKey = {
 Category.associations.Dishes = Category.hasMany(Dish, assOptions)
 Dish.associations.Category = Dish.belongsTo(Category, assOptions)
 
-// Admin 1 : 1 User (if User is Admin)
-// also there is a check in place to check if Admin is a Manager or not. If they are, it should not allow that
-assOptions.foreignKey = {
-  name: 'userId',
-  allowNull: false,
-}
-User.associations.Admin = User.hasOne(Admin, assOptions)
-Admin.associations.User = Admin.belongsTo(User, assOptions)
-
-// Manager 1 : 1 User (if User is Manager)
-// also there is a check in place to check if Admin is a Manager or not. If they are, it should not allow that
-assOptions.foreignKey = {
-  name: 'userId',
-  allowNull: false,
-}
-
-User.associations.Manager = User.hasOne(Manager, assOptions)
-Manager.associations.User = Manager.belongsTo(User, assOptions)
-
-// Admin.addHook('beforeCreate', (attrs, options) => {
-//   if (attrs.userId)
-// })
-
 /**
  * The object where all of the intialised models are stored for later reference.
  */
@@ -146,8 +119,6 @@ const models = {
   Cuisine,
   RestaurantCuisine,
   User,
-  Admin,
-  Manager,
 }
 
 /**
