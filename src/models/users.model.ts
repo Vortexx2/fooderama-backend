@@ -22,6 +22,7 @@ export class User extends Model<
   declare password: string
   declare role: CreationOptional<string>
   declare refreshToken: CreationOptional<string>
+  declare blacklisted: CreationOptional<string>
 
   // parameters we'll add afterwards
   // declare firstName: string
@@ -68,6 +69,11 @@ export function initUser(sequelize: Sequelize) {
         validate: {
           is: config.JWT_REGEX,
         },
+      },
+      blacklisted: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
     },
     {

@@ -17,7 +17,7 @@ import {
   isParticularUserOrAdmin,
   hasPermissions,
 } from '@middleware/auth'
-import { canRefreshAccess, createToken } from '@utils/auth.utils'
+import { canRefreshAccess, createToken, isAdmin } from '@utils/auth.utils'
 
 // Imports above
 
@@ -36,9 +36,16 @@ userRouter.get(
   hasPermissions('admin'),
   async (req, res, next) => {
     try {
+      // array to exclude when querying the database
+      const exclude = ['password', 'refreshToken']
+
+      // add `blacklisted` to the exclusions, if it is not specifically queriedd for
+      if (req.query.blacklist !== 'true') {
+        exclude.push('blacklisted')
+      }
       const users = await userService.findAll({
         attributes: {
-          exclude: ['password', 'refreshToken'],
+          exclude,
         },
       })
 
@@ -62,9 +69,16 @@ userRouter.get(
   async (req, res, next) => {
     try {
       const id = parseInt(req.params.id, 10)
+
+      const exclude = ['password', 'refreshToken']
+
+      if (req.query.blacklist !== 'true') {
+        exclude.push('blacklisted')
+      }
+
       const user = await userService.findById(id, {
         attributes: {
-          exclude: ['password', 'refreshToken'],
+          exclude,
         },
         rejectOnEmpty: false,
       })

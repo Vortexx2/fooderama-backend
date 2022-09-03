@@ -62,3 +62,7 @@ export function getJWTFromHeader(authHeader: string | undefined) {
 export function canRefreshAccess(user: User, refreshToken: string) {
   return refreshToken === user.refreshToken
 }
+
+export function isAdmin(user: User) {
+  return !user.blacklisted && user.role === 'admin'
+}
