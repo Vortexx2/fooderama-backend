@@ -1,4 +1,4 @@
-import { assignPropsToObject } from './routes.util'
+import { assignPropsToObject } from './routes.utils'
 
 // imports above
 

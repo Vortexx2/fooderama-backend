@@ -19,9 +19,9 @@
   - [x] Add asymmetric keys
   - [x] Add expiry to JWTs
   - [x] Add roles
-  - [] Add banning of accounts by a superadmin
-  - [] Add rate limiting to all authentication routes.
+  - [x] Add banning of accounts by a superadmin
   - [] Add email verification
+  - [] Add rate limiting to all authentication routes.
 
 [] Add a veg field to dishes and restaurants.
 

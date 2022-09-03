@@ -13,7 +13,7 @@ import { statusCodes } from '@constants/status'
 import { db } from '../db'
 import { checkNumericalParams } from '@middleware/routing'
 import { Restaurant } from '@models/restaurants.model'
-import { assignPropsToObject } from '@utils/routes.util'
+import { assignPropsToObject } from '@utils/routes.utils'
 import {
   zRestaurant,
   zRestaurantArray,
