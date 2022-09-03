@@ -60,6 +60,6 @@ export function canRefreshAccess(user: User, refreshToken: string) {
   return !user.blacklisted && refreshToken === user.refreshToken
 }
 
-export function isAdmin(user: User) {
-  return !user.blacklisted && user.role === 'admin'
+export function isAdmin(user: UserInJwt) {
+  return user.role === 'admin'
 }

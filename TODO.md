@@ -19,7 +19,6 @@
   - [x] Add asymmetric keys
   - [x] Add expiry to JWTs
   - [x] Add roles
-  - [] Add revoking of JWTs
   - [] Add banning of accounts by a superadmin
   - [] Add rate limiting to all authentication routes.
   - [] Add email verification

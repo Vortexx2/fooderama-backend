@@ -157,6 +157,13 @@ userRouter.post('/login', async (req, res, next) => {
         throw new ValidationError('Invalid email or password')
       }
 
+      // throw error if blacklisted
+      if (dbUser.blacklisted) {
+        throw new Unauthorized(
+          'Your account has been blacklisted. Contact an admin'
+        )
+      }
+
       // true only if the passwords match
       const compareResult = await compare(
         toBeCheckedUser.password,
@@ -257,7 +264,22 @@ userRouter.put(
         throw new ValidationError("Arrays can't be accepted for this operation")
       }
 
-      const parsedUser = zUser.omit({ email: true }).partial().parse(body)
+      const parsedUser = zUser
+        .extend({ blacklisted: z.boolean() })
+        .omit({ email: true })
+        .partial()
+        .parse(body)
+
+      // if user has `blacklisted` property
+      if (Object.prototype.hasOwnProperty.call(parsedUser, 'blacklisted')) {
+        // if user exists on request
+        if (req.user) {
+          // throw error if user is not an admin on JWT
+          if (!isAdmin(req.user)) {
+            throw new Unauthorized('User is unauthorized')
+          }
+        }
+      }
 
       if (parsedUser.password)
         parsedUser.password = await hash(parsedUser.password, 10)
