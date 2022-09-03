@@ -1,17 +1,22 @@
 import { Router } from 'express'
 import { z, ZodError } from 'zod'
 import { hash, compare } from 'bcrypt'
-import jwt from 'jsonwebtoken'
+import _ from 'lodash'
 
 import config from 'config'
 import * as userService from '@services/users.service'
 import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
 import { GeneralError, Unauthorized, ValidationError } from 'errors'
-import { JSONBody } from '@declarations/express'
+import { JSONBody, RequestWithUser } from '@declarations/express'
 import { zUser, zUserCookies } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
-import { validateJWT, isSignedIn } from '@middleware/auth'
+import {
+  validateJWT,
+  isSignedIn,
+  isParticularUserOrAdmin,
+  hasPermissions,
+} from '@middleware/auth'
 import { canRefreshAccess, createToken } from '@utils/auth.utils'
 
 // Imports above
@@ -24,19 +29,25 @@ const TOKEN_EXPIRY = config.has('tokenExpiryTime')
 /** A new individual user router for integration into the main router */
 const userRouter = Router()
 
-userRouter.get('/', validateJWT(), isSignedIn(), async (req, res, next) => {
-  try {
-    const users = await userService.findAll({
-      attributes: {
-        exclude: ['password', 'refreshToken'],
-      },
-    })
+userRouter.get(
+  '/',
+  validateJWT(),
+  isSignedIn(),
+  hasPermissions('admin'),
+  async (req, res, next) => {
+    try {
+      const users = await userService.findAll({
+        attributes: {
+          exclude: ['password', 'refreshToken'],
+        },
+      })
 
-    res.status(statusCodes.OK).json(users)
-  } catch (err) {
-    next(err)
+      res.status(statusCodes.OK).json(users)
+    } catch (err) {
+      next(err)
+    }
   }
-})
+)
 
 userRouter.get(
   '/:id',
@@ -47,6 +58,7 @@ userRouter.get(
 
   // check if req.user property was properly set
   isSignedIn(),
+  isParticularUserOrAdmin('id'),
   async (req, res, next) => {
     try {
       const id = parseInt(req.params.id, 10)
@@ -71,15 +83,8 @@ userRouter.post('/signup', async (req, res, next) => {
 
   try {
     const parsedUser = zUser.parse(body)
-    const hashedPass = await hash(parsedUser.password, 10)
 
-    // user object that will be used to insert into the database
-    const toBeUser = {
-      email: parsedUser.email,
-      password: hashedPass,
-    }
-
-    const insertedUser = await userService.create(toBeUser, {
+    const insertedUser = await userService.create(parsedUser, {
       transaction,
     })
 
@@ -90,8 +95,9 @@ userRouter.post('/signup', async (req, res, next) => {
 
     // the user object which will be used to create a jwt from
     const user = {
-      id: insertedUser.userId,
+      userId: insertedUser.userId,
       email: parsedUser.email,
+      role: 'user',
     }
 
     const accessToken = createToken(
@@ -112,8 +118,9 @@ userRouter.post('/signup', async (req, res, next) => {
 
     if (err instanceof ZodError) {
       next(new ValidationError('Validation error during signup', err.flatten()))
+    } else {
+      next(err)
     }
-    next(err)
   }
 })
 
@@ -157,8 +164,9 @@ userRouter.post('/login', async (req, res, next) => {
 
       // user object to be signed as jwt
       const user = {
-        id: dbUser.userId,
+        userId: dbUser.userId,
         email: dbUser.email,
+        role: dbUser.role,
       }
 
       const accessToken = createToken(
@@ -169,7 +177,7 @@ userRouter.post('/login', async (req, res, next) => {
 
       const refreshToken = createToken(user, config.get('PRIVATE_REFRESH_KEY'))
 
-      await dbUser.update('refreshToken', refreshToken)
+      await dbUser.update({ refreshToken })
 
       // send back the accessToken and the refreshToken as the response
       res.status(statusCodes.OK).json({ accessToken, refreshToken })
@@ -199,13 +207,12 @@ userRouter.post('/refresh', async (req, res, next) => {
       throw new Unauthorized('Invalid cookies')
     }
 
-    console.log(`registered token: ${foundUser.refreshToken}`)
     if (!canRefreshAccess(foundUser, refresh_token)) {
       throw new Unauthorized('Invalid cookies')
     }
 
     const accessToken = createToken(
-      { id: userId, email: foundUser.email },
+      { userId, email: foundUser.email },
       config.get('PRIVATE_ACCESS_KEY'),
       TOKEN_EXPIRY
     )
@@ -221,5 +228,55 @@ userRouter.post('/refresh', async (req, res, next) => {
     }
   }
 })
+
+userRouter.put(
+  '/:id',
+  checkNumericalParams('id'),
+  validateJWT(),
+  isSignedIn(),
+  isParticularUserOrAdmin('id'),
+  async (req: RequestWithUser, res, next) => {
+    const id = parseInt(req.params.id, 10)
+    const body: JSONBody = req.body
+
+    const transaction = await db.sequelize.transaction()
+    try {
+      if (Array.isArray(body)) {
+        throw new ValidationError("Arrays can't be accepted for this operation")
+      }
+
+      const parsedUser = zUser.omit({ email: true }).partial().parse(body)
+
+      if (parsedUser.password)
+        parsedUser.password = await hash(parsedUser.password, 10)
+
+      const updatedUser = await userService.update(id, parsedUser, {
+        transaction,
+      })
+
+      const toBeReturnedUser = _.omit(updatedUser.get(), [
+        'password',
+        'refreshToken',
+      ])
+
+      if (updatedUser.userId !== id) {
+        throw new Unauthorized('User is unauthorized')
+      }
+
+      await transaction.commit()
+      res.status(statusCodes.OK).json(toBeReturnedUser)
+    } catch (err) {
+      await transaction.rollback()
+
+      if (err instanceof ZodError) {
+        next(
+          new ValidationError('Validation error during updation', err.flatten)
+        )
+      } else {
+        next(err)
+      }
+    }
+  }
+)
 
 export default userRouter

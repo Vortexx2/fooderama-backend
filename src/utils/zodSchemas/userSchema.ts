@@ -29,20 +29,31 @@ export const zUser = z.object({
     ),
 })
 
+//** Used to parse the incoming cookies */
 export const zUserCookies = z.object({
-  refresh_token: z.string().regex(config.JWT_REGEX),
-  userId: z.string().transform((val, ctx) => {
-    const parsed = parseInt(val, 10)
+  refresh_token: z.string().trim().regex(config.JWT_REGEX),
+  userId: z
+    .string()
+    .trim()
+    .transform((val, ctx) => {
+      const parsed = parseInt(val, 10)
 
-    if (isNaN(parsed)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'userId is not a number',
-      })
-    }
+      if (isNaN(parsed)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'userId is not a number',
+        })
+      }
 
-    return parsed
-  }),
+      return parsed
+    }),
+})
+
+export const zUserResponse = zUser.omit({ password: true }).extend({
+  userId: z.number().int().nonnegative(),
+  role: z.nullable(z.string()),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 })
 
 export type zUserType = z.infer<typeof zUser>

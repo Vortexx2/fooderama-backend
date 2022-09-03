@@ -13,7 +13,7 @@ import { User } from '@models/users.model'
  * @returns the JWT token
  */
 export function createToken(
-  user: { id: number; email: string },
+  user: { userId: number; email: string },
   key: string,
   expiry?: string
 ) {
@@ -53,6 +53,12 @@ export function getJWTFromHeader(authHeader: string | undefined) {
   }
 }
 
+/**
+ * Function to check if the `refreshToken` provided is valid or not. Currently it checks if the refresh token stored in the database matches the one provided. In the future it will check if the user is blacklisted or not.
+ * @param user the user that is stored in the database
+ * @param refreshToken the refresh token to compare the token with which is stored in the database
+ * @returns true if it is a valid token associated with the current user, else false
+ */
 export function canRefreshAccess(user: User, refreshToken: string) {
   return refreshToken === user.refreshToken
 }

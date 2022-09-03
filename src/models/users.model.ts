@@ -5,11 +5,10 @@ import {
   InferAttributes,
   InferCreationAttributes,
   CreationOptional,
-  NonAttribute,
-  Association,
 } from 'sequelize'
 
 import { userValidationConfig as config } from '@constants/users'
+import { hash } from 'bcrypt'
 // Imports above
 
 export class User extends Model<
@@ -21,6 +20,7 @@ export class User extends Model<
   // we'll have email and phone number both because if a user wants to reset their password, it might be much cheaper to send a reset mail rather than a text with OTP
   declare email: string
   declare password: string
+  declare role: CreationOptional<string>
   declare refreshToken: CreationOptional<string>
 
   // parameters we'll add afterwards
@@ -58,6 +58,10 @@ export function initUser(sequelize: Sequelize) {
         type: DataTypes.STRING(64),
         allowNull: false,
       },
+      role: {
+        type: DataTypes.ENUM,
+        values: ['customer', 'manager', 'admin'],
+      },
       refreshToken: {
         type: DataTypes.TEXT,
         allowNull: true,
@@ -67,6 +71,12 @@ export function initUser(sequelize: Sequelize) {
       },
     },
     {
+      hooks: {
+        async beforeCreate(user, options) {
+          const hashedPass = await hash(user.password, 10)
+          user.password = hashedPass
+        },
+      },
       sequelize,
       timestamps: true,
     }

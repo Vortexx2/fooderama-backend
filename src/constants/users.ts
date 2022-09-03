@@ -7,3 +7,7 @@ export const userValidationConfig = {
   MAX_PASSWORD_LEN: 30,
   JWT_REGEX: /\S*\.\S*\.\S*/,
 }
+
+export const roleValidationConfig = {
+  MAX_ROLE_LENGTH: 20,
+}
