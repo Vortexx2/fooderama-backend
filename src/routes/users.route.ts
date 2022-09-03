@@ -39,10 +39,6 @@ userRouter.get(
       // array to exclude when querying the database
       const exclude = ['password', 'refreshToken']
 
-      // add `blacklisted` to the exclusions, if it is not specifically queriedd for
-      if (req.query.blacklist !== 'true') {
-        exclude.push('blacklisted')
-      }
       const users = await userService.findAll({
         attributes: {
           exclude,
@@ -71,10 +67,6 @@ userRouter.get(
       const id = parseInt(req.params.id, 10)
 
       const exclude = ['password', 'refreshToken']
-
-      if (req.query.blacklist !== 'true') {
-        exclude.push('blacklisted')
-      }
 
       const user = await userService.findById(id, {
         attributes: {
@@ -225,8 +217,14 @@ userRouter.post('/refresh', async (req, res, next) => {
       throw new Unauthorized('Invalid cookies')
     }
 
+    const userForToken = {
+      userId,
+      email: foundUser.email,
+      role: foundUser.role,
+    }
+
     const accessToken = createToken(
-      { userId, email: foundUser.email },
+      userForToken,
       config.get('PRIVATE_ACCESS_KEY'),
       TOKEN_EXPIRY
     )

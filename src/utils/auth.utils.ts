@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { Unauthorized } from 'errors'
 import { userValidationConfig as config } from '@constants/users'
 import { User } from '@models/users.model'
+import { UserInJwt } from '@declarations/users'
 // Imports above
 
 /**
@@ -12,11 +13,7 @@ import { User } from '@models/users.model'
  * @param expiry (optional) the amount of time it takes for the token to expire. If not passed, the token never expires
  * @returns the JWT token
  */
-export function createToken(
-  user: { userId: number; email: string },
-  key: string,
-  expiry?: string
-) {
+export function createToken(user: UserInJwt, key: string, expiry?: string) {
   // options that are supposed to be passed to `jwt.sign`
   const options: jwt.SignOptions = {
     algorithm: 'RS256',
@@ -54,13 +51,13 @@ export function getJWTFromHeader(authHeader: string | undefined) {
 }
 
 /**
- * Function to check if the `refreshToken` provided is valid or not. Currently it checks if the refresh token stored in the database matches the one provided. In the future it will check if the user is blacklisted or not.
+ * Function to check if the `refreshToken` provided is valid or not. It checks if the user is not blacklisted and if the `refreshToken`s match.
  * @param user the user that is stored in the database
  * @param refreshToken the refresh token to compare the token with which is stored in the database
  * @returns true if it is a valid token associated with the current user, else false
  */
 export function canRefreshAccess(user: User, refreshToken: string) {
-  return refreshToken === user.refreshToken
+  return !user.blacklisted && refreshToken === user.refreshToken
 }
 
 export function isAdmin(user: User) {
