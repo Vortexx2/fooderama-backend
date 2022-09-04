@@ -9,9 +9,18 @@ let PUBLIC_REFRESH_KEY = null
 let PRIVATE_REFRESH_KEY = null
 try {
   PUBLIC_ACCESS_KEY = fs.readFileSync(__dirname + '/access.public.pem', 'utf-8')
-  PRIVATE_ACCESS_KEY = fs.readFileSync(__dirname + '/access.private.pem', 'utf-8')
-  PUBLIC_REFRESH_KEY = fs.readFileSync(__dirname + '/refresh.public.pem', 'utf-8')
-  PRIVATE_REFRESH_KEY = fs.readFileSync(__dirname + '/refresh.private.pem', 'utf-8')
+  PRIVATE_ACCESS_KEY = fs.readFileSync(
+    __dirname + '/access.private.pem',
+    'utf-8'
+  )
+  PUBLIC_REFRESH_KEY = fs.readFileSync(
+    __dirname + '/refresh.public.pem',
+    'utf-8'
+  )
+  PRIVATE_REFRESH_KEY = fs.readFileSync(
+    __dirname + '/refresh.private.pem',
+    'utf-8'
+  )
 } catch (err) {
   console.error(
     'No Private and Public keys present in the config directory. Please follow readme to configure them'
@@ -39,5 +48,8 @@ module.exports = {
   PRIVATE_ACCESS_KEY,
   PUBLIC_REFRESH_KEY,
   PRIVATE_REFRESH_KEY,
+  EMAIL_SECRET: process.env.EMAIL_SECRET,
   tokenExpiryTime: '15m',
+  emailExpiryTime: '1d',
+  homeUrl: 'http://localhost:4000/'
 }

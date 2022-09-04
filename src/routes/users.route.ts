@@ -1,13 +1,14 @@
 import { Router } from 'express'
 import { z, ZodError } from 'zod'
 import { hash, compare } from 'bcrypt'
+import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 import _ from 'lodash'
 
 import config from 'config'
 import * as userService from '@services/users.service'
 import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
-import { GeneralError, Unauthorized, ValidationError } from 'errors'
+import { GeneralError, Unauthorized, ValidationError } from 'errors/errors'
 import { JSONBody, RequestWithUser } from '@declarations/express'
 import { zUser, zUserCookies } from '@utils/zodSchemas/userSchema'
 import { db } from 'db'
@@ -18,6 +19,8 @@ import {
   hasPermissions,
 } from '@middleware/auth'
 import { canRefreshAccess, createToken, isAdmin } from '@utils/auth.utils'
+import { sendVerificationMail } from '@utils/mailer.utils'
+import { UserInEmailJwt } from '@declarations/users'
 
 // Imports above
 
@@ -51,6 +54,31 @@ userRouter.get(
     }
   }
 )
+
+userRouter.get('/confirmation/:token', async (req, res, next) => {
+  try {
+    const token = req.params.token
+
+    if (!token) {
+      throw new Unauthorized('Token is not specified')
+    }
+
+    const { userId } = jwt.verify(
+      token,
+      config.get('EMAIL_SECRET')
+    ) as UserInEmailJwt
+
+    await userService.update(userId, {
+      activated: 'true',
+    })
+
+    res.redirect(config.get('homeUrl'))
+  } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      next(new Unauthorized(err.message))
+    } else next(err)
+  }
+})
 
 userRouter.get(
   '/:id',
@@ -116,10 +144,13 @@ userRouter.post('/signup', async (req, res, next) => {
 
     await insertedUser.update({ refreshToken }, { transaction })
 
+    sendVerificationMail(insertedUser)
+
     // commit transaction and send the response
     await transaction.commit()
     res.status(statusCodes.OK).json({ accessToken, refreshToken })
   } catch (err) {
+    // if (err instanceof GeneralError && err.message === )
     await transaction.rollback()
 
     if (err instanceof ZodError) {
@@ -162,6 +193,11 @@ userRouter.post('/login', async (req, res, next) => {
         throw new Unauthorized(
           'Your account has been blacklisted. Contact an admin'
         )
+      }
+
+      // if user has still not activated account by verifying their email
+      if (!dbUser.activated) {
+        throw new Unauthorized('Verify email to continue with login')
       }
 
       // true only if the passwords match
@@ -265,7 +301,12 @@ userRouter.put(
       }
 
       const parsedUser = zUser
-        .extend({ blacklisted: z.boolean() })
+        .extend({
+          blacklisted: z.union([
+            z.boolean().transform(val => val.toString()),
+            z.enum(['true', 'false']),
+          ]),
+        })
         .omit({ email: true })
         .partial()
         .parse(body)

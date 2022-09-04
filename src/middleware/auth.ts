@@ -2,10 +2,10 @@ import { NextFunction, Response } from 'express'
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 
 import config from 'config'
-import { Unauthorized } from 'errors'
+import { Unauthorized } from 'errors/errors'
 import { getJWTFromHeader } from '@utils/auth.utils'
 import { RequestWithUser } from '@declarations/express'
-import { Roles, UserInJwt } from '@declarations/users'
+import { Roles, UserInAccessJwt } from '@declarations/users'
 // Imports above
 
 export function validateJWT() {
@@ -17,7 +17,7 @@ export function validateJWT() {
       const user = jwt.verify(
         token,
         config.get('PUBLIC_ACCESS_KEY')
-      ) as UserInJwt
+      ) as UserInAccessJwt
 
       // set the user property on the request object, so that we can pass it along
       req.user = user

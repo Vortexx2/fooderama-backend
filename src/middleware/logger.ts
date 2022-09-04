@@ -2,7 +2,7 @@ import { ErrorRequestHandler, Request, Response, NextFunction } from 'express'
 
 import logger from '../logger'
 import { statusCodes } from '@constants/status'
-import { CustomError, NotFound } from '../errors'
+import { CustomError, NotFound } from '../errors/errors'
 
 // Imports above
 

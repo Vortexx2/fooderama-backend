@@ -1,6 +1,6 @@
 import { db } from '../db'
 import { Restaurant, TRestaurant } from '@models/restaurants.model'
-import { NotFound } from '../errors'
+import { NotFound } from '../errors/errors'
 
 import type {
   zRestaurantType,

@@ -19,7 +19,7 @@ import {
   zRestaurantArray,
   zCuisinesArray,
 } from '@utils/zodSchemas/restSchema'
-import { ValidationError } from '../errors'
+import { ValidationError } from '../errors/errors'
 
 import { JSONBody } from '@declarations/express'
 // Imports Above

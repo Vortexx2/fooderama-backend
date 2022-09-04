@@ -1,5 +1,5 @@
 import { Request } from 'express'
-import { UserInJwt } from './users'
+import { UserInAccessJwt } from './users'
 
 // Imports above
 
@@ -7,5 +7,5 @@ import { UserInJwt } from './users'
 export type JSONBody = Record<string, any> | Record<string, any>[]
 
 export interface RequestWithUser extends Request {
-  user?: UserInJwt
+  user?: UserInAccessJwt
 }

@@ -1,10 +1,15 @@
 import { JwtPayload } from 'jsonwebtoken'
 // Imports above
 
-export interface UserInJwt extends JwtPayload {
+export interface UserInAccessJwt extends JwtPayload {
   userId: number
   email: string
   role: string
+  // blacklisted: boolean
+}
+
+export interface UserInEmailJwt extends JwtPayload {
+  userId: number
 }
 
 export type Roles = 'user' | 'manager' | 'admin'

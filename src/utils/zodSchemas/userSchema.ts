@@ -52,8 +52,15 @@ export const zUserCookies = z.object({
 export const zUserResponse = zUser.omit({ password: true }).extend({
   userId: z.number().int().nonnegative(),
   role: z.nullable(z.string()),
+  confirmed: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
+
+// export const zUserUpdate = zUser.extend({
+//   userId: z.number().int().nonnegative(),
+//   role: z.nullable(z.string()),
+//   confirmed: z.boolean(),
+// })
 
 export type zUserType = z.infer<typeof zUser>

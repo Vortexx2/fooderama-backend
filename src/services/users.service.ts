@@ -8,7 +8,7 @@ import {
 import { db } from 'db'
 import { TUser, User } from '@models/users.model'
 import { zUserType } from '@utils/zodSchemas/userSchema'
-import { NotFound } from 'errors'
+import { NotFound } from 'errors/errors'
 
 // Imports above
 
@@ -37,7 +37,7 @@ export const create = async (user: zUserType, options?: any) => {
 
 export const update = async (
   id: number,
-  user: Partial<zUserType>,
+  user: Partial<InferAttributes<User, { omit: never }>>,
   options?: InstanceUpdateOptions<InferAttributes<User, { omit: never }>>
 ) => {
   const foundUser = await User.findByPk(id)

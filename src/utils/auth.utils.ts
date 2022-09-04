@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'
 
-import { Unauthorized } from 'errors'
+import { Unauthorized } from 'errors/errors'
 import { userValidationConfig as config } from '@constants/users'
 import { User } from '@models/users.model'
-import { UserInJwt } from '@declarations/users'
+import { UserInAccessJwt } from '@declarations/users'
 // Imports above
 
 /**
@@ -13,7 +13,11 @@ import { UserInJwt } from '@declarations/users'
  * @param expiry (optional) the amount of time it takes for the token to expire. If not passed, the token never expires
  * @returns the JWT token
  */
-export function createToken(user: UserInJwt, key: string, expiry?: string) {
+export function createToken(
+  user: UserInAccessJwt,
+  key: string,
+  expiry?: string
+) {
   // options that are supposed to be passed to `jwt.sign`
   const options: jwt.SignOptions = {
     algorithm: 'RS256',
@@ -60,6 +64,11 @@ export function canRefreshAccess(user: User, refreshToken: string) {
   return !user.blacklisted && refreshToken === user.refreshToken
 }
 
-export function isAdmin(user: UserInJwt) {
+/**
+ * Checks if the role property on `user` is equal to 'admin'
+ * @param user the user in the JWT
+ * @returns if user is admin or not
+ */
+export function isAdmin(user: UserInAccessJwt) {
   return user.role === 'admin'
 }

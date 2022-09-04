@@ -23,6 +23,7 @@ export class User extends Model<
   declare role: CreationOptional<string>
   declare refreshToken: CreationOptional<string>
   declare blacklisted: CreationOptional<string>
+  declare activated: CreationOptional<string>
 
   // parameters we'll add afterwards
   // declare firstName: string
@@ -62,6 +63,11 @@ export function initUser(sequelize: Sequelize) {
       role: {
         type: DataTypes.ENUM,
         values: ['customer', 'manager', 'admin'],
+      },
+      activated: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       refreshToken: {
         type: DataTypes.TEXT,

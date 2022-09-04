@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { BadRequest } from '../errors'
+import { BadRequest } from '../errors/errors'
 // Imports above
 
 /**
