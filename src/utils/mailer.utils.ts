@@ -34,10 +34,16 @@ export function sendVerificationMail(user: User) {
   const urlForVerification = `http://localhost:4000/api/v1/users/confirmation/${token}`
 
   transporter.sendMail({
+    from: 'Fooderama fooderama@gmail.com',
     to: user.email,
     subject: 'Verification of Fooderama Account',
-    html: `To verify your account, click on the following link:\n
+    html: `
+    <h1>Verify your email</h1>
+    <p>
+      To verify your account, click on the following link:\n
+    </p>
     <br/>
-    <a href="${urlForVerification}">${urlForVerification}</a>`,
+    <a href="${urlForVerification}">${urlForVerification}</a>
+    `,
   })
 }

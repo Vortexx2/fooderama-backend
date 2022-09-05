@@ -21,7 +21,9 @@
   - [x] Add roles
   - [x] Add banning of accounts by a superadmin
   - [] Add email verification
-  - [] Add rate limiting to all authentication routes.
+  - [] Add rate limiting to all authentication routes
+  - [] Add reset password mail
+  - [] Add phone number verification
 
 [] Add a veg field to dishes and restaurants.
 
