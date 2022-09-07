@@ -24,14 +24,13 @@
 
 - I named it **default**
 
-7. Create a database in it called **fooderama-test**.
+7. Create a database in it called **fooderama-dev**.
 
 8. Generate a RSA private and public keypair:
 
-   - Use the below command to generate a private key:<br/>
-     `openssl genrsa -out config/access.private.pem`
-
-   - Derive a public key from the private key using the following command:<br/>
-     `openssl rsa -in config/access.private.pem -pubout -out config/access.public.pem`
-
-   - Similarly, do it for the keys for the refresh token as well.
+   ```
+   openssl genrsa -out config/access.private.pem
+   openssl genrsa -out config/refresh.private.pem
+   openssl rsa -in config/access.private.pem -pubout -out config/access.public.pem
+   openssl rsa -in config/refresh.private.pem -pubout -out config/refresh.public.pem
+   ```
