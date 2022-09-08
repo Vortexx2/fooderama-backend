@@ -69,7 +69,7 @@ userRouter.get('/confirmation/:token', async (req, res, next) => {
     ) as UserInEmailJwt
 
     await userService.update(userId, {
-      activated: 'true',
+      activated: true,
     })
 
     res.redirect(config.get('homeUrl'))
@@ -131,7 +131,7 @@ userRouter.post('/signup', async (req, res, next) => {
     const user: UserInAccessJwt = {
       userId: insertedUser.userId,
       email: insertedUser.email,
-      role: 'user',
+      role: 'customer',
       activated: false,
     }
 
@@ -212,7 +212,7 @@ userRouter.post('/login', async (req, res, next) => {
         userId: dbUser.userId,
         email: dbUser.email,
         role: dbUser.role,
-        activated: dbUser.activated === 'false' ? false : true,
+        activated: dbUser.activated,
       }
 
       const accessToken = createToken(
@@ -261,7 +261,7 @@ userRouter.post('/refresh', async (req, res, next) => {
       userId,
       email: foundUser.email,
       role: foundUser.role,
-      activated: foundUser.activated === 'false' ? false : true,
+      activated: foundUser.activated,
     }
 
     const accessToken = createToken(
@@ -301,8 +301,8 @@ userRouter.put(
       const parsedUser = zUser
         .extend({
           blacklisted: z.union([
-            z.boolean().transform(val => val.toString()),
-            z.enum(['true', 'false']),
+            z.boolean(),
+            z.enum(['true', 'false']).transform(val => val === 'true'),
           ]),
         })
         .omit({ email: true })
