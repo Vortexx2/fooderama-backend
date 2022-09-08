@@ -20,7 +20,7 @@ import {
 } from '@middleware/auth'
 import { canRefreshAccess, createToken, isAdmin } from '@utils/auth.utils'
 import { sendVerificationMail } from '@utils/mailer.utils'
-import { UserInEmailJwt } from '@declarations/users'
+import { UserInAccessJwt, UserInEmailJwt } from '@declarations/users'
 
 // Imports above
 
@@ -128,10 +128,11 @@ userRouter.post('/signup', async (req, res, next) => {
     }
 
     // the user object which will be used to create a jwt from
-    const user = {
+    const user: UserInAccessJwt = {
       userId: insertedUser.userId,
-      email: parsedUser.email,
+      email: insertedUser.email,
       role: 'user',
+      activated: false,
     }
 
     const accessToken = createToken(
@@ -195,11 +196,6 @@ userRouter.post('/login', async (req, res, next) => {
         )
       }
 
-      // if user has still not activated account by verifying their email
-      if (!dbUser.activated) {
-        throw new Unauthorized('Verify email to continue with login')
-      }
-
       // true only if the passwords match
       const compareResult = await compare(
         toBeCheckedUser.password,
@@ -212,10 +208,11 @@ userRouter.post('/login', async (req, res, next) => {
       }
 
       // user object to be signed as jwt
-      const user = {
+      const user: UserInAccessJwt = {
         userId: dbUser.userId,
         email: dbUser.email,
         role: dbUser.role,
+        activated: dbUser.activated === 'false' ? false : true,
       }
 
       const accessToken = createToken(
@@ -260,10 +257,11 @@ userRouter.post('/refresh', async (req, res, next) => {
       throw new Unauthorized('Invalid cookies')
     }
 
-    const userForToken = {
+    const userForToken: UserInAccessJwt = {
       userId,
       email: foundUser.email,
       role: foundUser.role,
+      activated: foundUser.activated === 'false' ? false : true,
     }
 
     const accessToken = createToken(

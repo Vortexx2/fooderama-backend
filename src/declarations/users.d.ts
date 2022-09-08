@@ -5,6 +5,7 @@ export interface UserInAccessJwt extends JwtPayload {
   userId: number
   email: string
   role: string
+  activated: boolean
   // blacklisted: boolean
 }
 
