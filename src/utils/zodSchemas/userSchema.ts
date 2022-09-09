@@ -16,7 +16,7 @@ export const zUser = z.object({
       pass =>
         validator.isStrongPassword(pass, {
           minLength: config.MIN_PASSWORD_LEN,
-          minLowercase: 1,
+          minLowercase: 0,
           minUppercase: 0,
           minNumbers: 1,
           minSymbols: 0,
