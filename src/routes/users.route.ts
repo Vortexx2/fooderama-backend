@@ -149,7 +149,11 @@ userRouter.post('/signup', async (req, res, next) => {
 
     // commit transaction and send the response
     await transaction.commit()
-    res.status(statusCodes.OK).json({ accessToken, refreshToken })
+    res
+      .status(statusCodes.OK)
+      .cookie('refreshToken', refreshToken)
+      .cookie('userId', insertedUser.userId)
+      .json({ accessToken })
   } catch (err) {
     // if (err instanceof GeneralError && err.message === )
     await transaction.rollback()
@@ -226,7 +230,11 @@ userRouter.post('/login', async (req, res, next) => {
       await dbUser.update({ refreshToken })
 
       // send back the accessToken and the refreshToken as the response
-      res.status(statusCodes.OK).json({ accessToken, refreshToken })
+      res
+        .status(statusCodes.OK)
+        .cookie('refreshToken', refreshToken)
+        .cookie('userId', dbUser.userId)
+        .json({ accessToken })
     }
   } catch (err) {
     if (err instanceof ZodError) {
@@ -272,7 +280,9 @@ userRouter.post('/refresh', async (req, res, next) => {
 
     res
       .status(statusCodes.OK)
-      .json({ accessToken, refreshToken: refresh_token })
+      .cookie('refreshToken', refresh_token)
+      .cookie('userId', userId)
+      .json({ accessToken })
   } catch (err) {
     if (err instanceof ZodError) {
       next(new Unauthorized('Invalid cookies'))
