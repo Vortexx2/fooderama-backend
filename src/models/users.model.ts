@@ -69,7 +69,7 @@ export function initUser(sequelize: Sequelize) {
       activated: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: true,
       },
       refreshToken: {
         type: DataTypes.TEXT,
@@ -86,7 +86,7 @@ export function initUser(sequelize: Sequelize) {
     },
     {
       hooks: {
-        async beforeCreate(user, options) {
+        async beforeCreate(user) {
           const hashedPass = await hash(user.password, 10)
           user.password = hashedPass
         },

@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { CookieOptions, Router } from 'express'
 import { z, ZodError } from 'zod'
 import { hash, compare } from 'bcrypt'
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
@@ -33,6 +33,14 @@ import { UserInAccessJwt, UserInEmailJwt } from '@declarations/users'
 const TOKEN_EXPIRY = config.has('tokenExpiryTime')
   ? (config.get('tokenExpiryTime') as string)
   : '10m'
+
+// const COOKIE_SETTINGS = config.has('cookieSettings')
+//   ? config.get('cookieSettings')
+//   : {}
+
+const COOKIE_SETTINGS: CookieOptions = config.has('cookieSettings')
+  ? config.get('cookieSettings')
+  : {}
 
 /** A new individual user router for integration into the main router */
 const userRouter = Router()
@@ -91,6 +99,7 @@ userRouter.get('/refresh', async (req, res, next) => {
 
     const { refreshToken, userId } = cookies
 
+    console.log(userId)
     const foundUser = await userService.findOne({
       where: {
         userId,
@@ -99,11 +108,6 @@ userRouter.get('/refresh', async (req, res, next) => {
 
     // If userId provided in the cookies is invalid
     if (!foundUser || !canRefreshAccess(foundUser, refreshToken)) {
-      clearCookies(res, ['userId', 'refreshToken'])
-      throw new Unauthorized('Invalid cookies')
-    }
-
-    if (!canRefreshAccess(foundUser, refreshToken)) {
       clearCookies(res, ['userId', 'refreshToken'])
       throw new Unauthorized('Invalid cookies')
     }
@@ -123,8 +127,8 @@ userRouter.get('/refresh', async (req, res, next) => {
 
     res
       .status(statusCodes.OK)
-      .cookie('refreshToken', refreshToken, config.get('cookieSettings'))
-      .cookie('userId', userId, config.get('cookieSettings'))
+      .cookie('refreshToken', refreshToken, COOKIE_SETTINGS)
+      .cookie('userId', userId, COOKIE_SETTINGS)
       .json({ accessToken })
   } catch (err) {
     if (err instanceof ZodError) {
@@ -208,8 +212,8 @@ userRouter.post('/signup', async (req, res, next) => {
     await transaction.commit()
     res
       .status(statusCodes.OK)
-      .cookie('refreshToken', refreshToken, config.get('cookieSettings'))
-      .cookie('userId', insertedUser.userId, config.get('cookieSettings'))
+      .cookie('refreshToken', refreshToken, COOKIE_SETTINGS)
+      .cookie('userId', insertedUser.userId, COOKIE_SETTINGS)
       .json({ accessToken })
   } catch (err) {
     // if (err instanceof GeneralError && err.message === )
@@ -289,7 +293,7 @@ userRouter.post('/login', async (req, res, next) => {
       // send back the accessToken and the refreshToken as the response
       res
         .status(statusCodes.OK)
-        .cookie('refreshToken', refreshToken, config.get('cookieSettings'))
+        .cookie('refreshToken', refreshToken, COOKIE_SETTINGS)
         .cookie('userId', dbUser.userId, config.get('cookieSettings'))
         .json({ accessToken })
     }

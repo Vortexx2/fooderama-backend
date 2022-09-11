@@ -58,10 +58,12 @@ module.exports = {
     credentials: true,
   },
   helmetSettings: { contentSecurityPolicy: false },
-  cookieSettings: { 
+  cookieSettings: {
     httpOnly: true,
     secure: false,
-    sameSite: 'Lax'
+    sameSite: false,
+    // 1 day maxAge
+    maxAge: 1000 * 60 * 60 * 24,
   },
   PUBLIC_ACCESS_KEY,
   PRIVATE_ACCESS_KEY,
