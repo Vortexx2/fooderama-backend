@@ -42,7 +42,21 @@ module.exports = {
   },
   defaultRestaurantImage:
     'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8cmVzdGF1cmFudHxlbnwwfHwwfHw%3D&w=1000&q=80',
-  corsSettings: {},
+
+  // settings to pass into cors
+  corsSettings: {
+    // below function only allows all cors requests that originate on `localhost`
+    origin: (origin, cb) => {
+      if (origin.startsWith('http://localhost')) {
+        cb(null, true)
+      } else {
+        cb(new Error('Not allowed by CORS'))
+      }
+    },
+
+    // allows cookies to be sent on the allowed origins from above
+    credentials: true,
+  },
   helmetSettings: { contentSecurityPolicy: false },
   PUBLIC_ACCESS_KEY,
   PRIVATE_ACCESS_KEY,
@@ -51,5 +65,5 @@ module.exports = {
   EMAIL_SECRET: process.env.EMAIL_SECRET,
   tokenExpiryTime: '15m',
   emailExpiryTime: '1d',
-  homeUrl: 'http://localhost:4000/'
+  homeUrl: 'http://localhost:4000/',
 }
