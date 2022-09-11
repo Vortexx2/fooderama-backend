@@ -47,7 +47,7 @@ module.exports = {
   corsSettings: {
     // below function only allows all cors requests that originate on `localhost`
     origin: (origin, cb) => {
-      if (origin.startsWith('http://localhost')) {
+      if (!origin || origin.startsWith('http://localhost')) {
         cb(null, true)
       } else {
         cb(new Error('Not allowed by CORS'))
@@ -58,6 +58,11 @@ module.exports = {
     credentials: true,
   },
   helmetSettings: { contentSecurityPolicy: false },
+  cookieSettings: { 
+    httpOnly: true,
+    secure: false,
+    sameSite: 'Lax'
+  },
   PUBLIC_ACCESS_KEY,
   PRIVATE_ACCESS_KEY,
   PUBLIC_REFRESH_KEY,

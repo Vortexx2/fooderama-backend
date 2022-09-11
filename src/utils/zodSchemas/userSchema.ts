@@ -31,7 +31,7 @@ export const zUser = z.object({
 
 //** Used to parse the incoming cookies */
 export const zUserCookies = z.object({
-  refresh_token: z.string().trim().regex(config.JWT_REGEX),
+  refreshToken: z.string().trim().regex(config.JWT_REGEX),
   userId: z
     .string()
     .trim()
@@ -56,11 +56,5 @@ export const zUserResponse = zUser.omit({ password: true }).extend({
   createdAt: z.string(),
   updatedAt: z.string(),
 })
-
-// export const zUserUpdate = zUser.extend({
-//   userId: z.number().int().nonnegative(),
-//   role: z.nullable(z.string()),
-//   confirmed: z.boolean(),
-// })
 
 export type zUserType = z.infer<typeof zUser>

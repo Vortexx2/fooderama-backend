@@ -18,7 +18,12 @@ import {
   isParticularUserOrAdmin,
   hasPermissions,
 } from '@middleware/auth'
-import { canRefreshAccess, createToken, isAdmin } from '@utils/auth.utils'
+import {
+  canRefreshAccess,
+  clearCookies,
+  createToken,
+  isAdmin,
+} from '@utils/auth.utils'
 import { sendVerificationMail } from '@utils/mailer.utils'
 import { UserInAccessJwt, UserInEmailJwt } from '@declarations/users'
 
@@ -80,6 +85,57 @@ userRouter.get('/confirmation/:token', async (req, res, next) => {
   }
 })
 
+userRouter.get('/refresh', async (req, res, next) => {
+  try {
+    const cookies = zUserCookies.parse(req.cookies)
+
+    const { refreshToken, userId } = cookies
+
+    const foundUser = await userService.findOne({
+      where: {
+        userId,
+      },
+    })
+
+    // If userId provided in the cookies is invalid
+    if (!foundUser || !canRefreshAccess(foundUser, refreshToken)) {
+      clearCookies(res, ['userId', 'refreshToken'])
+      throw new Unauthorized('Invalid cookies')
+    }
+
+    if (!canRefreshAccess(foundUser, refreshToken)) {
+      clearCookies(res, ['userId', 'refreshToken'])
+      throw new Unauthorized('Invalid cookies')
+    }
+
+    const userForToken: UserInAccessJwt = {
+      userId,
+      email: foundUser.email,
+      role: foundUser.role,
+      activated: foundUser.activated,
+    }
+
+    const accessToken = createToken(
+      userForToken,
+      config.get('PRIVATE_ACCESS_KEY'),
+      TOKEN_EXPIRY
+    )
+
+    res
+      .status(statusCodes.OK)
+      .cookie('refreshToken', refreshToken, config.get('cookieSettings'))
+      .cookie('userId', userId, config.get('cookieSettings'))
+      .json({ accessToken })
+  } catch (err) {
+    if (err instanceof ZodError) {
+      clearCookies(res, ['userId', 'refreshToken'])
+      next(new Unauthorized('Invalid cookies'))
+    } else {
+      next(err)
+    }
+  }
+})
+
 userRouter.get(
   '/:id',
   checkNumericalParams('id'),
@@ -132,7 +188,7 @@ userRouter.post('/signup', async (req, res, next) => {
       userId: insertedUser.userId,
       email: insertedUser.email,
       role: 'customer',
-      activated: false,
+      activated: true,
     }
 
     const accessToken = createToken(
@@ -145,14 +201,15 @@ userRouter.post('/signup', async (req, res, next) => {
 
     await insertedUser.update({ refreshToken }, { transaction })
 
-    sendVerificationMail(insertedUser)
+    // FIXME: No verification email will be sent for now
+    // sendVerificationMail(insertedUser)
 
     // commit transaction and send the response
     await transaction.commit()
     res
       .status(statusCodes.OK)
-      .cookie('refreshToken', refreshToken)
-      .cookie('userId', insertedUser.userId)
+      .cookie('refreshToken', refreshToken, config.get('cookieSettings'))
+      .cookie('userId', insertedUser.userId, config.get('cookieSettings'))
       .json({ accessToken })
   } catch (err) {
     // if (err instanceof GeneralError && err.message === )
@@ -193,13 +250,6 @@ userRouter.post('/login', async (req, res, next) => {
         throw new ValidationError('Invalid email or password')
       }
 
-      // throw error if blacklisted
-      if (dbUser.blacklisted) {
-        throw new Unauthorized(
-          'Your account has been blacklisted. Contact an admin'
-        )
-      }
-
       // true only if the passwords match
       const compareResult = await compare(
         toBeCheckedUser.password,
@@ -209,6 +259,13 @@ userRouter.post('/login', async (req, res, next) => {
       // if password provided does not match with the one in the database
       if (!compareResult) {
         throw new Unauthorized('Invalid email or password')
+      }
+
+      // throw error if blacklisted
+      if (dbUser.blacklisted) {
+        throw new Unauthorized(
+          'Your account has been blacklisted. Contact an admin'
+        )
       }
 
       // user object to be signed as jwt
@@ -232,8 +289,8 @@ userRouter.post('/login', async (req, res, next) => {
       // send back the accessToken and the refreshToken as the response
       res
         .status(statusCodes.OK)
-        .cookie('refreshToken', refreshToken)
-        .cookie('userId', dbUser.userId)
+        .cookie('refreshToken', refreshToken, config.get('cookieSettings'))
+        .cookie('userId', dbUser.userId, config.get('cookieSettings'))
         .json({ accessToken })
     }
   } catch (err) {
@@ -241,54 +298,6 @@ userRouter.post('/login', async (req, res, next) => {
       next(new ValidationError('Invalid email or password', err.flatten()))
     }
     next(err)
-  }
-})
-
-userRouter.post('/refresh', async (req, res, next) => {
-  try {
-    const cookies = zUserCookies.parse(req.cookies)
-
-    const { refresh_token, userId } = cookies
-
-    const foundUser = await userService.findOne({
-      where: {
-        userId,
-      },
-    })
-
-    // If userId provided in the cookies is invalid
-    if (!foundUser) {
-      throw new Unauthorized('Invalid cookies')
-    }
-
-    if (!canRefreshAccess(foundUser, refresh_token)) {
-      throw new Unauthorized('Invalid cookies')
-    }
-
-    const userForToken: UserInAccessJwt = {
-      userId,
-      email: foundUser.email,
-      role: foundUser.role,
-      activated: foundUser.activated,
-    }
-
-    const accessToken = createToken(
-      userForToken,
-      config.get('PRIVATE_ACCESS_KEY'),
-      TOKEN_EXPIRY
-    )
-
-    res
-      .status(statusCodes.OK)
-      .cookie('refreshToken', refresh_token)
-      .cookie('userId', userId)
-      .json({ accessToken })
-  } catch (err) {
-    if (err instanceof ZodError) {
-      next(new Unauthorized('Invalid cookies'))
-    } else {
-      next(err)
-    }
   }
 })
 

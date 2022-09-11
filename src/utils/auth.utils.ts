@@ -4,6 +4,7 @@ import { Unauthorized } from 'errors/errors'
 import { userValidationConfig as config } from '@constants/users'
 import { User } from '@models/users.model'
 import { UserInAccessJwt } from '@declarations/users'
+import { Response } from 'express'
 // Imports above
 
 /**
@@ -71,4 +72,18 @@ export function canRefreshAccess(user: User, refreshToken: string) {
  */
 export function isAdmin(user: UserInAccessJwt) {
   return user.role === 'admin'
+}
+
+// export function setCookies(res: Response, cookiePairs: Record<string, any>) {
+//   for (const val in cookiePairs) {
+//     res.cookie('refresh')
+
+//   }
+
+// }
+
+export function clearCookies(res: Response, cookies: string[]) {
+  cookies.forEach(cookieName => {
+    res.clearCookie(cookieName)
+  })
 }
