@@ -68,6 +68,7 @@ userRouter.get(
   }
 )
 
+/** Confirm a user with the email that gets sent to their email */
 userRouter.get('/confirmation/:token', async (req, res, next) => {
   try {
     const token = req.params.token
@@ -93,13 +94,23 @@ userRouter.get('/confirmation/:token', async (req, res, next) => {
   }
 })
 
+/** The logout route clears all relevant cookies, so as to logout the user */
+userRouter.get('/logout', (req, res, next) => {
+  try {
+    clearCookies(res, ['userId', 'refreshToken'])
+    res.json({ success: true })
+  } catch (err) {
+    next(new Unauthorized('Logout unsuccessful'))
+  }
+})
+
+/** Refresh your access token */
 userRouter.get('/refresh', async (req, res, next) => {
   try {
     const cookies = zUserCookies.parse(req.cookies)
 
     const { refreshToken, userId } = cookies
 
-    console.log(userId)
     const foundUser = await userService.findOne({
       where: {
         userId,
@@ -140,6 +151,7 @@ userRouter.get('/refresh', async (req, res, next) => {
   }
 })
 
+/** Get a particular user */
 userRouter.get(
   '/:id',
   checkNumericalParams('id'),
@@ -170,6 +182,7 @@ userRouter.get(
   }
 )
 
+/** Signup for a new user */
 userRouter.post('/signup', async (req, res, next) => {
   const body: JSONBody = req.body
 
@@ -227,6 +240,7 @@ userRouter.post('/signup', async (req, res, next) => {
   }
 })
 
+// Login user
 userRouter.post('/login', async (req, res, next) => {
   const body: JSONBody = req.body
 
@@ -305,6 +319,7 @@ userRouter.post('/login', async (req, res, next) => {
   }
 })
 
+// Update user in database
 userRouter.put(
   '/:id',
   checkNumericalParams('id'),
