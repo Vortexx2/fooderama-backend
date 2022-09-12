@@ -1,7 +1,6 @@
 import { z } from 'zod'
 
 import { userValidationConfig as config } from '@constants/users'
-import validator from 'validator'
 
 // Imports above
 

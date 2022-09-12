@@ -1,7 +1,6 @@
 import { Router } from 'express'
 
 import * as categoryService from '@services/categories.service'
-import { checkNumericalParams } from '@middleware/routing'
 import { JSONBody } from '@declarations/express'
 import { ValidationError } from 'errors/errors'
 import { zCategory } from '@utils/zodSchemas/categorySchema'
