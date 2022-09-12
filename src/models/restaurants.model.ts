@@ -7,6 +7,7 @@ import {
   CreationOptional,
   Association,
   NonAttribute,
+  HasManySetAssociationsMixin,
 } from 'sequelize'
 
 import config from 'config'
@@ -33,6 +34,11 @@ export class Restaurant extends Model<
 
   declare Cuisines?: NonAttribute<Cuisine[]>
   declare Categories?: NonAttribute<Category[]>
+
+  declare setCuisines: HasManySetAssociationsMixin<
+    Cuisine,
+    Cuisine['cuisineId']
+  >
 
   declare static associations: {
     // Restaurants m: n Cuisines

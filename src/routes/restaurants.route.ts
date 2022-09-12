@@ -268,12 +268,14 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
     const id = parseInt(req.params.id, 10)
     const body: JSONBody = req.body
 
-    const { cuisines } = req.query
+    if (Array.isArray(body)) {
+      throw new ValidationError("Request body can't be an array")
+    }
 
     let updatedRestaurant
 
-    // if the route had ?cuisines=true query param
-    if (cuisines === 'true') {
+    // if the route had a `Cuisines` property
+    if (Object.prototype.hasOwnProperty.call(body, 'Cuisines')) {
       const parsedRestaurant = zRestaurant
         .partial()
         .extend({ Cuisines: zCuisinesArray })
@@ -288,45 +290,10 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
         cuisine => cuisine.cuisineId
       )
 
-      /** Find all cuisines that have cuisine in `cuisineIds` */
-      const foundCuisines = await cuisineService.findAll({
-        where: {
-          cuisineId: cuisineIds,
-        },
-        transaction,
-      })
+      // Update the restaurant instance with the provided cuisines. Throws an error if a restaurant which does not exist is referenced.
+      await updatedRestaurant.setCuisines(cuisineIds, { transaction })
 
-      // if all of the provided Cuisines are not in the database throw a validation error
-      if (foundCuisines.length !== cuisineIds.length) {
-        throw new ValidationError(
-          'All of the provided Cuisines do not exist in the database'
-        )
-      }
-
-      // first delete all of the records that had restId
-      await db.models.RestaurantCuisine.destroy({
-        where: {
-          restId: id,
-        },
-        transaction,
-      })
-
-      /** the records that we need to bulk create in the `RestaurantCuisine` model */
-      const creationRestaurantCuisines = parsedRestaurant.Cuisines.map(
-        cuisine => {
-          return {
-            restId: id,
-            cuisineId: cuisine.cuisineId,
-          }
-        }
-      )
-      // create all of the associations that we want to
-      await db.models.RestaurantCuisine.bulkCreate(creationRestaurantCuisines, {
-        validate: true,
-        transaction,
-      })
-
-      // reload the currently created restaurant with `Cuisines`
+      // reload the instance to include the cuisines
       await updatedRestaurant.reload({
         include: {
           model: db.models.Cuisine,
