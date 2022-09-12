@@ -63,6 +63,7 @@ restRouter.get('/', async (req, res, next) => {
       })
     }
 
+    // if menu has a true query parameter
     if (menu === 'true') {
       includeArray.push({
         model: db.models.Category,

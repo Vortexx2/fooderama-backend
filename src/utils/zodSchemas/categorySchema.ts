@@ -15,3 +15,10 @@ export const zCategory = z.object({
 })
 
 export type zCategoryType = z.infer<typeof zCategory>
+
+export const zUpdateCategory = zCategory
+  .omit({ restId: true })
+  .partial()
+  .strict()
+
+export type zUpdateCategoryType = z.infer<typeof zUpdateCategory>
