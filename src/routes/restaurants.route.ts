@@ -46,22 +46,30 @@ const props = [
 // the GET all route, does not perform any operations on the queried data from the DB
 restRouter.get('/', async (req, res, next) => {
   try {
-    const { cuisines, orderby, sort, open } = req.query
+    const { cuisines, menu, orderby, sort, open } = req.query
 
     const queryOptions: FindOptions<
       InferAttributes<Restaurant, { omit: never }>
     > = {}
 
+    const includeArray: Includeable[] = []
     // if cuisines exists and is true
     if (cuisines === 'true') {
-      queryOptions.include = {
+      includeArray.push({
         model: db.models.Cuisine,
         through: {
           attributes: [],
         },
-      }
+      })
     }
 
+    if (menu === 'true') {
+      includeArray.push({
+        model: db.models.Category,
+      })
+    }
+
+    queryOptions.include = includeArray
     const ORDERBY_OPTIONS = z.enum(['restId', 'restName', 'open'])
     const parsedOrder = ORDERBY_OPTIONS.safeParse(orderby)
     const parsedSort = z.enum(['asc', 'desc']).safeParse(sort)
