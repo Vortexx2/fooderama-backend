@@ -2,7 +2,7 @@ import { NextFunction, Response } from 'express'
 import jwt, { JsonWebTokenError } from 'jsonwebtoken'
 
 import config from 'config'
-import { Unauthorized } from 'errors/errors'
+import { Unauthorized } from '../errors/errors'
 import { getJWTFromHeader } from '@utils/auth.utils'
 import { RequestWithUser } from '@declarations/express'
 import { Roles, UserInAccessJwt } from '@declarations/users'

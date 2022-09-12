@@ -5,10 +5,10 @@ import {
   NonNullFindOptions,
 } from 'sequelize/types'
 
-import { db } from 'db'
+import { db } from '../db'
 import { TUser, User } from '@models/users.model'
 import { zUserType } from '@utils/zodSchemas/userSchema'
-import { NotFound } from 'errors/errors'
+import { NotFound } from '../errors/errors'
 
 // Imports above
 

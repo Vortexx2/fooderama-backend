@@ -2,7 +2,7 @@ import { Router } from 'express'
 
 import * as categoryService from '@services/categories.service'
 import { JSONBody } from '@declarations/express'
-import { ValidationError } from 'errors/errors'
+import { ValidationError } from '../errors/errors'
 import { zCategory, zUpdateCategory } from '@utils/zodSchemas/categorySchema'
 import { ZodError } from 'zod'
 import { statusCodes } from '@constants/status'

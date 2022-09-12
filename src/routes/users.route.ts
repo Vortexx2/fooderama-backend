@@ -8,10 +8,10 @@ import config from 'config'
 import * as userService from '@services/users.service'
 import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
-import { GeneralError, Unauthorized, ValidationError } from 'errors/errors'
+import { GeneralError, Unauthorized, ValidationError } from '../errors/errors'
 import { JSONBody, RequestWithUser } from '@declarations/express'
 import { zUser, zUserCookies } from '@utils/zodSchemas/userSchema'
-import { db } from 'db'
+import { db } from '../db'
 import {
   validateJWT,
   isSignedIn,

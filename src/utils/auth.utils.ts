@@ -1,10 +1,10 @@
+import { Response } from 'express'
 import jwt from 'jsonwebtoken'
 
-import { Unauthorized } from 'errors/errors'
+import { Unauthorized } from '../errors/errors'
 import { userValidationConfig as config } from '@constants/users'
 import { User } from '@models/users.model'
 import { UserInAccessJwt } from '@declarations/users'
-import { Response } from 'express'
 // Imports above
 
 /**

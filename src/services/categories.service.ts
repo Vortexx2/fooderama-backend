@@ -6,7 +6,7 @@ import {
   zCategoryType,
   zUpdateCategoryType,
 } from '@utils/zodSchemas/categorySchema'
-import { NotFound } from 'errors/errors'
+import { NotFound } from '../errors/errors'
 // Imports above
 
 const { models } = db
