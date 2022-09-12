@@ -24,7 +24,10 @@ categoryRouter.post('/', async (req, res, next) => {
   } catch (err) {
     if (err instanceof ZodError) {
       next(
-        new ValidationError('Validation error during creation of categories')
+        new ValidationError(
+          'Validation error during creation of categories',
+          err.flatten()
+        )
       )
     } else {
       next(err)

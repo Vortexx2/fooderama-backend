@@ -3,6 +3,7 @@ import {
   InferAttributes,
   FindOptions,
   NonNullFindOptions,
+  Includeable,
 } from 'sequelize/types'
 import { z, ZodError } from 'zod'
 
@@ -108,24 +109,33 @@ restRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
   try {
     const id = parseInt(req.params.id, 10)
 
-    const { cuisines } = req.query
+    const { cuisines, menu } = req.query
 
     const queryOptions: Omit<
       NonNullFindOptions<InferAttributes<Restaurant, { omit: never }>>,
       'where'
     > = { rejectOnEmpty: false }
 
+    const includeArray: Includeable[] = []
     // if cuisines exists and is true
     if (cuisines === 'true') {
-      queryOptions.include = {
+      includeArray.push({
         model: db.models.Cuisine,
         through: {
           attributes: [],
         },
-      }
+      })
     }
 
+    if (menu === 'true') {
+      includeArray.push({
+        model: db.models.Category,
+      })
+    }
+    queryOptions.include = includeArray
+
     const restaurant = await restService.find(id, queryOptions)
+
     res.status(statusCodes.OK).json(restaurant)
   } catch (error: any) {
     next(error)

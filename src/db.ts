@@ -98,7 +98,6 @@ const assOptions: HasOneOptions = {
   onUpdate: 'CASCADE',
 }
 Restaurant.associations.Categories = Restaurant.hasMany(Category, assOptions)
-
 Category.associations.Restaurant = Category.belongsTo(Restaurant, assOptions)
 
 // Categories 1 : m Dishes
