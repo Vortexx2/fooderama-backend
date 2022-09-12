@@ -7,6 +7,7 @@ import {
   CreationOptional,
   Association,
   NonAttribute,
+  ForeignKey,
 } from 'sequelize'
 import { Dish } from './dishes.model'
 
@@ -32,6 +33,9 @@ export class Category extends Model<
   declare Restaurant?: NonAttribute<Restaurant>
   declare Dishes?: NonAttribute<Dish[]>
 
+  declare restId: ForeignKey<Restaurant['restId']>
+  declare dishId: ForeignKey<Dish['dishId']>
+
   declare static associations: {
     Restaurant: Association<Category, Restaurant>
     Dishes: Association<Category, Dish>
@@ -46,7 +50,7 @@ export function initCategory(sequelize: Sequelize) {
       categoryId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrementIdentity: true,
+        autoIncrement: true,
       },
       categoryName: {
         type: DataTypes.STRING(config.MAX_CAT_LEN),
