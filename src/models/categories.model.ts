@@ -27,7 +27,7 @@ export class Category extends Model<
 > {
   declare categoryId: CreationOptional<number>
   declare categoryName: string
-  declare description: CreationOptional<string>
+  // declare description: CreationOptional<string>
 
   declare Restaurant?: NonAttribute<Restaurant>
   declare Dishes?: NonAttribute<Dish[]>
@@ -58,16 +58,16 @@ export function initCategory(sequelize: Sequelize) {
           },
         },
       },
-      description: {
-        type: DataTypes.STRING(config.MAX_DESC_LEN),
-        allowNull: true,
-        validate: {
-          len: {
-            args: [config.MIN_DESC_LEN, config.MAX_DESC_LEN],
-            msg: `Category name must be between ${config.MIN_DESC_LEN} and ${config.MAX_DESC_LEN} characters in length`,
-          },
-        },
-      },
+      // description: {
+      //   type: DataTypes.STRING(config.MAX_DESC_LEN),
+      //   allowNull: true,
+      //   validate: {
+      //     len: {
+      //       args: [config.MIN_DESC_LEN, config.MAX_DESC_LEN],
+      //       msg: `Category description must be between ${config.MIN_DESC_LEN} and ${config.MAX_DESC_LEN} characters in length`,
+      //     },
+      //   },
+      // },
     },
     {
       sequelize,
