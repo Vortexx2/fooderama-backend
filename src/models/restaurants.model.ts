@@ -8,6 +8,7 @@ import {
   Association,
   NonAttribute,
   HasManySetAssociationsMixin,
+  HasManyRemoveAssociationMixin,
 } from 'sequelize'
 
 import config from 'config'
@@ -38,6 +39,15 @@ export class Restaurant extends Model<
   declare setCuisines: HasManySetAssociationsMixin<
     Cuisine,
     Cuisine['cuisineId']
+  >
+  declare setCategories: HasManySetAssociationsMixin<
+    Category,
+    Category['categoryId']
+  >
+
+  declare removeCategories: HasManyRemoveAssociationMixin<
+    Category,
+    Category['categoryId']
   >
 
   declare static associations: {

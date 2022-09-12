@@ -9,6 +9,7 @@ import { z, ZodError } from 'zod'
 
 import * as restService from '@services/restaurants.service'
 import * as cuisineService from '@services/cuisines.service'
+import * as categoryService from '@services/categories.service'
 import { statusCodes } from '@constants/status'
 
 import { db } from '../db'
@@ -23,6 +24,7 @@ import {
 import { ValidationError } from '../errors/errors'
 
 import { JSONBody } from '@declarations/express'
+import { zCategoryArray } from '@utils/zodSchemas/categorySchema'
 // Imports Above
 
 /**
@@ -272,21 +274,22 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
       throw new ValidationError("Request body can't be an array")
     }
 
-    let updatedRestaurant
+    const parsedRestaurant = zRestaurant
+      .extend({ Cuisines: zCuisinesArray, Categories: zCategoryArray })
+      .partial()
+      .parse(body)
+
+    const updatedRestaurant = await restService.update(id, parsedRestaurant, {
+      transaction,
+    })
 
     // if the route had a `Cuisines` property
-    if (Object.prototype.hasOwnProperty.call(body, 'Cuisines')) {
-      const parsedRestaurant = zRestaurant
-        .partial()
-        .extend({ Cuisines: zCuisinesArray })
-        .parse(body)
-
-      updatedRestaurant = await restService.update(id, parsedRestaurant, {
-        transaction,
-      })
-
+    if (
+      Object.prototype.hasOwnProperty.call(parsedRestaurant, 'Cuisines') &&
+      parsedRestaurant.Cuisines
+    ) {
       /** Array of `cuisineId`s */
-      const cuisineIds: number[] = parsedRestaurant.Cuisines.map(
+      const cuisineIds = parsedRestaurant.Cuisines.map(
         cuisine => cuisine.cuisineId
       )
 
@@ -305,15 +308,31 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
       })
     }
 
-    // if the route had no ?cuisines=true query param
-    else {
-      // parse body through a partial of the `zRestaurant` schema
-      const rest = zRestaurant.partial().parse(body)
+    // if body has `Categories` field
+    if (
+      Object.prototype.hasOwnProperty.call(parsedRestaurant, 'Categories') &&
+      parsedRestaurant.Categories
+    ) {
+      // delete all categories with the mentioned restId
+      await categoryService.deleteWithId(updatedRestaurant.restId)
 
-      // this won't have `Cuisines` included
-      updatedRestaurant = await restService.update(id, rest)
+      // create new restaurants with the provided `Categories`
+      await categoryService.createAll(parsedRestaurant.Categories)
+
+      await updatedRestaurant.reload({
+        include: [
+          {
+            model: db.models.Category,
+          },
+          {
+            model: db.models.Cuisine,
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+      })
     }
-
     await transaction.commit()
     res.status(statusCodes.OK).json(updatedRestaurant)
   } catch (error: unknown) {

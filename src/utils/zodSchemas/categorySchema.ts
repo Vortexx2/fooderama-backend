@@ -16,6 +16,10 @@ export const zCategory = z.object({
 
 export type zCategoryType = z.infer<typeof zCategory>
 
+export const zCategoryArray = z.array(zCategory)
+
+export type zCategoryArrayType = z.infer<typeof zCategoryArray>
+
 export const zUpdateCategory = zCategory
   .omit({ restId: true })
   .partial()
