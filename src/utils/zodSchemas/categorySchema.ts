@@ -14,7 +14,7 @@ export const zCategory = z.object({
     .min(config.MIN_CATEGORY_LEN)
     .max(config.MAX_CATEGORY_LEN),
   sortId: z.number().int().nonnegative(),
-  Dishes: z.array(zDish).optional(),
+  Dishes: z.array(zDish).max(config.MAX_DISHES).optional(),
 })
 
 export type zCategoryType = z.infer<typeof zCategory>
