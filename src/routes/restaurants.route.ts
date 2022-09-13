@@ -385,6 +385,9 @@ async function updateRestaurantController(
             },
           },
         ],
+
+        // always order categories by the order that we always want in
+        order: [[db.models.Category, 'sortId', 'ASC']],
       })
     }
     await transaction.commit()

@@ -9,6 +9,7 @@ import {
   NonAttribute,
   HasManySetAssociationsMixin,
   HasManyRemoveAssociationMixin,
+  HasManyAddAssociationsMixin,
 } from 'sequelize'
 
 import config from 'config'
@@ -35,6 +36,11 @@ export class Restaurant extends Model<
 
   declare Cuisines?: NonAttribute<Cuisine[]>
   declare Categories?: NonAttribute<Category[]>
+
+  declare addCuisines: HasManyAddAssociationsMixin<
+    Cuisine,
+    Cuisine['cuisineId']
+  >
 
   declare setCuisines: HasManySetAssociationsMixin<
     Cuisine,

@@ -28,6 +28,7 @@ export class Category extends Model<
 > {
   declare categoryId: CreationOptional<number>
   declare categoryName: string
+  declare sortId: number
   // declare description: CreationOptional<string>
 
   declare Restaurant?: NonAttribute<Restaurant>
@@ -62,6 +63,11 @@ export function initCategory(sequelize: Sequelize) {
           },
         },
       },
+      sortId: {
+        type: DataTypes.SMALLINT,
+        allowNull: false,
+      },
+
       // description: {
       //   type: DataTypes.STRING(config.MAX_DESC_LEN),
       //   allowNull: true,
