@@ -15,9 +15,17 @@ export const cuisineValidationConfig = {
   MAX_CUISINE_LEN: 16,
 }
 
-export const menuValidationConfig = {
+export const categoryValidationConfig = {
+  MIN_CAT_LEN: 3,
+  MAX_CAT_LEN: 50,
+  MIN_DESC_LEN: 5,
+  MAX_DESC_LEN: 256,
+}
+
+export const dishValidationConfig = {
   MIN_DISH_LEN: 3,
   MAX_DISH_LEN: 32,
   MIN_DESC_LEN: 4,
   MAX_DESC_LEN: 256,
+  MAX_PRICE: 2048,
 }

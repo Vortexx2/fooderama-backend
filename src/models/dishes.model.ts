@@ -9,7 +9,7 @@ import {
   NonAttribute,
 } from 'sequelize'
 
-import { menuValidationConfig as config } from '@constants/restaurants'
+import { dishValidationConfig as config } from '@constants/restaurants'
 import { Category } from './categories.model'
 // Imports above
 
@@ -19,7 +19,9 @@ export class Dish extends Model<
 > {
   declare dishId: CreationOptional<number>
   declare dishName: string
-  declare description: CreationOptional<string>
+  declare price: number
+  declare sortId: number
+  // declare description: CreationOptional<string>
 
   declare Category?: NonAttribute<Category>
 
@@ -48,17 +50,30 @@ export function initDish(sequelize: Sequelize) {
             msg: `Dish Name has to be between ${config.MIN_DISH_LEN} and ${config.MAX_DISH_LEN} characters in length`,
           },
         },
+        comment:
+          'The name that the dish has. Can contain the size of the dish, if it has one, in parentheses next to the name of the dish (like seen on Zomato)',
       },
-      description: {
-        type: DataTypes.STRING(config.MAX_DESC_LEN),
-        allowNull: true,
+      price: {
+        type: DataTypes.SMALLINT,
+        allowNull: false,
         validate: {
-          len: {
-            args: [config.MIN_DESC_LEN, config.MAX_DESC_LEN],
-            msg: `Dish Description has to between ${config.MIN_DESC_LEN} and ${config.MAX_DESC_LEN} characters in length`,
-          },
+          max: config.MAX_PRICE,
         },
       },
+      sortId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      // description: {
+      //   type: DataTypes.STRING(config.MAX_DESC_LEN),
+      //   allowNull: true,
+      //   validate: {
+      //     len: {
+      //       args: [config.MIN_DESC_LEN, config.MAX_DESC_LEN],
+      //       msg: `Dish Description has to between ${config.MIN_DESC_LEN} and ${config.MAX_DESC_LEN} characters in length`,
+      //     },
+      //   },
+      // },
     },
     {
       sequelize,

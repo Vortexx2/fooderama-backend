@@ -9,18 +9,13 @@ import {
   NonAttribute,
   ForeignKey,
 } from 'sequelize'
+
+import { categoryValidationConfig as config } from '@constants/restaurants'
+
 import { Dish } from './dishes.model'
-
 import { Restaurant } from './restaurants.model'
-// imports above
 
-// config for validation
-const config = {
-  MIN_CAT_LEN: 3,
-  MAX_CAT_LEN: 50,
-  MIN_DESC_LEN: 5,
-  MAX_DESC_LEN: 256,
-}
+// imports above
 
 export class Category extends Model<
   InferAttributes<Category, { omit: 'Restaurant' | 'Dishes' }>,
