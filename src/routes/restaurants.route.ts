@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { NextFunction, Request, Response, Router } from 'express'
 import {
   InferAttributes,
   FindOptions,
@@ -25,6 +25,7 @@ import { ValidationError } from '../errors/errors'
 
 import { JSONBody } from '@declarations/express'
 import { zCategoryArray } from '@utils/zodSchemas/categorySchema'
+import { hasPermissions, isSignedIn, validateJWT } from '@middleware/auth'
 // Imports Above
 
 /**
@@ -46,7 +47,51 @@ const props = [
 ]
 
 // the GET all route, does not perform any operations on the queried data from the DB
-restRouter.get('/', async (req, res, next) => {
+restRouter.get('/', getAllRestaurantsController)
+
+// the GET id route, performs check to see if provided id is of a valid format. Does not perform any operations on the queried data from the DB
+restRouter.get(
+  '/:id',
+  checkNumericalParams('id'),
+  getParticularRestaurantController
+)
+
+// the POST route, extracts all the registered props on the model from the body, and then performs the create query on the DB
+restRouter.post(
+  '/',
+  validateJWT(),
+  isSignedIn(),
+  hasPermissions('admin'),
+  createRestaurantsController
+)
+
+// the UPDATE route, checks if provided `id` is of a valid format and then extracts only the registered properties from the request body and then calls the `update` sequelize method
+restRouter.put('/:id', checkNumericalParams('id'), updateRestaurantController)
+
+// the DELETE route, validates the `id` param first, and then uses a `where` object (according to the sequelize where clause) in the body to filter those records with the respective
+restRouter.delete(
+  '/:id',
+  checkNumericalParams('id'),
+  validateJWT(),
+  isSignedIn(),
+  hasPermissions('admin'),
+  deleteWithIdController
+)
+
+// the DELETE route, the body is the where clause similar to the `WHERE` in SQL.
+restRouter.delete(
+  '/',
+  validateJWT(),
+  isSignedIn(),
+  hasPermissions('admin'),
+  deleteWhereController
+)
+
+async function getAllRestaurantsController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { cuisines, menu, orderby, sort, open } = req.query
 
@@ -113,10 +158,13 @@ restRouter.get('/', async (req, res, next) => {
       next(error)
     }
   }
-})
+}
 
-// the GET id route, performs check to see if provided id is of a valid format. Does not perform any operations on the queried data from the DB
-restRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
+async function getParticularRestaurantController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const id = parseInt(req.params.id, 10)
 
@@ -151,10 +199,13 @@ restRouter.get('/:id', checkNumericalParams('id'), async (req, res, next) => {
   } catch (error: any) {
     next(error)
   }
-})
+}
 
-// the POST route, extracts all the registered props on the model from the body, and then performs the create query on the DB
-restRouter.post('/', async (req, res, next) => {
+async function createRestaurantsController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const body: JSONBody = req.body
 
   const transaction = await db.sequelize.transaction()
@@ -259,10 +310,13 @@ restRouter.post('/', async (req, res, next) => {
       next(error)
     }
   }
-})
+}
 
-// the UPDATE route, checks if provided `id` is of a valid format and then extracts only the registered properties from the request body and then calls the `update` sequelize method
-restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
+async function updateRestaurantController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const transaction = await db.sequelize.transaction()
 
   try {
@@ -348,31 +402,13 @@ restRouter.put('/:id', checkNumericalParams('id'), async (req, res, next) => {
     }
     next(error)
   }
-})
+}
 
-// the DELETE route, validates the `id` param first, and then uses a `where` object (according to the sequelize where clause) in the body to filter those records with the respective
-restRouter.delete(
-  '/:id',
-  checkNumericalParams('id'),
-  async (req, res, next) => {
-    try {
-      const id = parseInt(req.params.id, 10)
-      const where: any = req.body
-
-      where['restId'] = id
-
-      const deletedRows = await restService.del({
-        where,
-      })
-      res.status(statusCodes.OK).json({ deletedRows })
-    } catch (error: any) {
-      next(error)
-    }
-  }
-)
-
-// the DELETE route, the body is the where clause similar to the `WHERE` in SQL.
-restRouter.delete('/', async (req, res, next) => {
+async function deleteWhereController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
     const { body } = req
     const whereProps = props
@@ -386,6 +422,25 @@ restRouter.delete('/', async (req, res, next) => {
   } catch (error: any) {
     next(error)
   }
-})
+}
+
+async function deleteWithIdController(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = parseInt(req.params.id, 10)
+    const where: any = req.body
+    where['restId'] = id
+
+    const deletedRows = await restService.del({
+      where,
+    })
+    res.status(statusCodes.OK).json({ deletedRows })
+  } catch (error: any) {
+    next(error)
+  }
+}
 
 export default restRouter
