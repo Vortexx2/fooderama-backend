@@ -1,4 +1,9 @@
-import { FindOptions, InferAttributes, InstanceUpdateOptions } from 'sequelize'
+import {
+  CreateOptions,
+  FindOptions,
+  InferAttributes,
+  InstanceUpdateOptions,
+} from 'sequelize'
 import { db } from '../db'
 
 import { Category } from '@models/categories.model'
@@ -24,8 +29,13 @@ export const find = async (categoryId: number) => {
   return models.Category.findByPk(categoryId)
 }
 
-export const create = async (category: zCategoryType) => {
-  return models.Category.create(category)
+export const create = async (
+  category: zCategoryType,
+  options?: CreateOptions<
+    InferAttributes<Category, { omit: 'Restaurant' | 'Dishes' }>
+  >
+) => {
+  return models.Category.create(category, options)
 }
 
 /**

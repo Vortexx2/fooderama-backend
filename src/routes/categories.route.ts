@@ -7,6 +7,7 @@ import { ValidationError } from '../errors/errors'
 import { zCategory, zUpdateCategory } from '@utils/zodSchemas/categorySchema'
 import { statusCodes } from '@constants/status'
 import { checkNumericalParams } from '@middleware/routing'
+import { db } from 'db'
 
 // Imports above
 
@@ -17,16 +18,27 @@ categoryRouter.post('/', createCategory)
 categoryRouter.put('/:id', checkNumericalParams('id'), updateCategory)
 
 async function createCategory(req: Request, res: Response, next: NextFunction) {
+  const transaction = await db.sequelize.transaction()
   const body: JSONBody = req.body
   try {
     if (Array.isArray(body)) {
       throw new ValidationError('Request body should be an object')
     }
 
-    const createdCategory = await categoryService.create(zCategory.parse(body))
+    const createdCategory = await categoryService.create(
+      zCategory.parse(body),
+      {
+        include: {
+          model: db.models.Dish,
+        },
+        transaction,
+      }
+    )
 
+    await transaction.commit()
     res.status(statusCodes.OK).json(createdCategory)
   } catch (err) {
+    await transaction.rollback()
     if (err instanceof ZodError) {
       next(
         new ValidationError(

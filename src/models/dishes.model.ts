@@ -39,7 +39,7 @@ export function initDish(sequelize: Sequelize) {
       dishId: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrementIdentity: true,
+        autoIncrement: true,
       },
       dishName: {
         type: DataTypes.STRING(config.MAX_DISH_LEN),

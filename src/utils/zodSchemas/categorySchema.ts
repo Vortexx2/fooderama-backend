@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { categoryValidationConfig as config } from '@constants/categories'
+import { zDish } from './dishSchema'
 
 // Imports above
 
@@ -13,6 +14,7 @@ export const zCategory = z.object({
     .min(config.MIN_CATEGORY_LEN)
     .max(config.MAX_CATEGORY_LEN),
   sortId: z.number().int().nonnegative(),
+  Dishes: z.array(zDish).optional(),
 })
 
 export type zCategoryType = z.infer<typeof zCategory>

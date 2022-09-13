@@ -11,9 +11,12 @@ export const zDish = z.object({
     .trim()
     .min(config.MIN_DISH_LEN)
     .max(config.MAX_DISH_LEN)
-    .transform(dish => {
-      dish.split(' ').map(word => word[0].toUpperCase() + word[0].substring(1))
-    }),
+    .transform(dish =>
+      dish
+        .split(' ')
+        .map(word => word[0].toUpperCase() + word.substring(1))
+        .join(' ')
+    ),
   price: z.number().int().positive().max(config.MAX_PRICE),
   sortId: z.number().int().nonnegative(),
 })
